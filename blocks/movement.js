@@ -46,3 +46,15 @@ Blockly.Blocks['movement_robot'] = {
     this.setHelpUrl('http://www.google.com/');
   }
 };
+
+Blockly.Blocks['setup_movement'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Setup Robot Movement");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};

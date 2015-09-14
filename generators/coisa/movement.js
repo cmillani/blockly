@@ -37,21 +37,26 @@ Blockly.Coisa['movement_robot'] = function(block) {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 15\n";
 	  code += "syscall\n";
-	  code += "jr	$31\n";
   }
   else if (dropdown_movement == "right")
   {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 16\n";
 	  code += "syscall\n";
-	  code += "jr	$31\n";
   }
   else 
   {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 17\n";
 	  code += "syscall\n";
-	  code += "jr	$31\n";
   }
+  return code;
+};
+
+Blockly.Coisa['setup_movement'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+	var code = "li	$v0, 12\n";
+	code+= "li	$v1, 18\n";
+	code+= "syscall\n";
   return code;
 };

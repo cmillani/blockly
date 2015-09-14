@@ -137,6 +137,8 @@ Blockly.Coisa.init = function(workspace) {
  * @return {string} Completed code.
  */
 Blockly.Coisa.finish = function(code) {
+  // Add crt0.s and the return to the code
+  code = "li	$v0, 11\nsyscall\njal	main\nli	$v0, 10\nsyscall\nmain:\n"+code+"jr	$31\n";
   // Convert the definitions dictionary into a list.
   var definitions = [];
   for (var name in Blockly.Coisa.definitions_) {
