@@ -40,6 +40,18 @@
 <script src="../generators/dart/colour.js"></script>
 <script src="../generators/dart/variables.js"></script>
 <script src="../generators/dart/procedures.js"></script>
+
+<script src="../generators/coisa.js"></script>
+<script src="../generators/coisa/logic.js"></script>
+<script src="../generators/coisa/loops.js"></script>
+<script src="../generators/coisa/math.js"></script>
+<script src="../generators/coisa/text.js"></script>
+<script src="../generators/coisa/lists.js"></script>
+<script src="../generators/coisa/colour.js"></script>
+<script src="../generators/coisa/variables.js"></script>
+<script src="../generators/coisa/procedures.js"></script>
+<script src="../generators/coisa/movement.js"></script>
+
 <script src="../msg/messages.js"></script>
 <script src="../blocks/logic.js"></script>
 <script src="../blocks/loops.js"></script>
@@ -49,6 +61,8 @@
 <script src="../blocks/colour.js"></script>
 <script src="../blocks/variables.js"></script>
 <script src="../blocks/procedures.js"></script>
+
+<script src="../blocks/movement.js"></script>
 <!-- Load the Google Drive SDK Realtime libraries. -->
 <script src="https://apis.google.com/js/api.js"></script>
 <script>
@@ -229,6 +243,9 @@ h1 {
       <block type="logic_boolean"></block>
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
+    </category>
+    <category name="Movement">
+      <block type="movement_robot"></block>
     </category>
     <category name="Loops">
       <block type="controls_repeat_ext">
@@ -458,6 +475,8 @@ h1 {
     <input type="button" value="To PHP" onclick="toCode('PHP')">
     &nbsp;
     <input type="button" value="To Dart" onclick="toCode('Dart')">
+    &nbsp;
+    <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')">
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"></textarea>
   </p>
