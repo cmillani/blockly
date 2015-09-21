@@ -30,7 +30,6 @@ goog.require('Blockly.Coisa');
 
 Blockly.Coisa['movement_robot'] = function(block) {
   var dropdown_movement = block.getFieldValue('movement');
-  // TODO: Assemble JavaScript into code variable.
   var code = "";
   if (dropdown_movement == "ahead")
   {
@@ -54,7 +53,6 @@ Blockly.Coisa['movement_robot'] = function(block) {
 };
 
 Blockly.Coisa['setup_movement'] = function(block) {
-  // TODO: Assemble JavaScript into code variable.
 	var code = "li	$v0, 12\n";
 	code+= "li	$v1, 18\n";
 	code+= "syscall\n";

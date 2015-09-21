@@ -31,6 +31,12 @@ goog.require('Blockly.Coisa');
 
 Blockly.Coisa['controls_repeat_ext'] = function(block) {
   // Repeat n times.
+  if(!Blockly.Coisa['controls_repeat_ext'].count)
+  {
+    Blockly.Coisa['controls_repeat_ext'].count = 0;
+  }
+  Blockly.Coisa['controls_repeat_ext'].count += 1;
+  console.log(Blockly.Coisa['controls_repeat_ext'].count);
   if (block.getField('TIMES')) {
     // Internal number.
     var repeats = Number(block.getFieldValue('TIMES'));
@@ -48,12 +54,27 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
   if (!repeats.match(/^\w+$/) && !Blockly.isNumber(repeats)) {
     var endVar = Blockly.Coisa.variableDB_.getDistinctName(
         'repeat_end', Blockly.Variables.NAME_TYPE);
-    code += 'var ' + endVar + ' = ' + repeats + ';\n';
+    // code += 'var ' + endVar + ' = ' + repeats + ';\n'; ---->>>> TODO: New variable created, alloc space
   }
-  code += 'for (var ' + loopVar + ' = 0; ' +
-      loopVar + ' < ' + endVar + '; ' +
-      loopVar + '++) {\n' +
-      branch + '}\n';
+  code += "addiu	sp,sp,-8\n";
+  code += "sw	s0,0(sp)\n";
+  code += "sw	s1,4(sp)\n";
+  code += "clear	s0\n";
+  code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
+  code += "bge	s0,s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  
+  code += branch;//TODO: load the endVar to s1
+  
+  code += "addiu	s0, s0, 1\n";
+  code += "j	dowhileloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  code += "endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
+  code += "lw	s1,4(sp)\n";
+  code += "lw	s0,0(sp)\n";
+  code += "addiu	sp, sp, 8\n";
+  // code += 'for (var ' + loopVar + ' = 0; ' +
+//       loopVar + ' < ' + endVar + '; ' +
+//       loopVar + '++) {\n' +
+//       branch + '}\n';
   return code;
 };
 
