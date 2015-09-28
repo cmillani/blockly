@@ -31,8 +31,9 @@ goog.require('Blockly.Coisa');
 
 Blockly.Coisa['math_number'] = function(block) {
   // Numeric value.
-  var code = parseFloat(block.getFieldValue('NUM'));
-  return [code, Blockly.Coisa.ORDER_ATOMIC];
+  var immediate = parseInt(block.getFieldValue('NUM'));
+  var code = "li	$r1,"+immediate+"\n";
+  return [code, Blockly.Coisa.ORDER_NONE];
 };
 
 Blockly.Coisa['math_arithmetic'] = function(block) {

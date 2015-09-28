@@ -36,14 +36,13 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
     Blockly.Coisa['controls_repeat_ext'].count = 0;
   }
   Blockly.Coisa['controls_repeat_ext'].count += 1;
-  console.log(Blockly.Coisa['controls_repeat_ext'].count);
   if (block.getField('TIMES')) {
     // Internal number.
     var repeats = Number(block.getFieldValue('TIMES'));
   } else {
     // External number.
     var repeats = Blockly.Coisa.valueToCode(block, 'TIMES',
-        Blockly.Coisa.ORDER_ASSIGNMENT) || '0';
+        Blockly.Coisa.ORDER_NONE) || '0';
   }
   var branch = Blockly.Coisa.statementToCode(block, 'DO');
   branch = Blockly.Coisa.addLoopTrap(branch, block.id);
@@ -56,21 +55,21 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
         'repeat_end', Blockly.Variables.NAME_TYPE);
     // code += 'var ' + endVar + ' = ' + repeats + ';\n'; ---->>>> TODO: New variable created, alloc space
   }
-  code += "addiu	sp,sp,-8\n";
-  code += "sw	s0,0(sp)\n";
-  code += "sw	s1,4(sp)\n";
-  code += "clear	s0\n";
+  code += "addiu	$sp,$sp,-8\n";
+  code += "sw	$s0,0($sp)\n";
+  code += "sw	$s1,4($sp)\n";
+  code += "clear	$s0\n";
   code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
-  code += "bge	s0,s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  code += "bge	$s0,$s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+	
+  code += repeats;
   
-  code += branch;//TODO: load the endVar to s1
-  
-  code += "addiu	s0, s0, 1\n";
+  code += "addiu	$s0, $s0, 1\n";
   code += "j	dowhileloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
   code += "endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
-  code += "lw	s1,4(sp)\n";
-  code += "lw	s0,0(sp)\n";
-  code += "addiu	sp, sp, 8\n";
+  code += "lw	$s1,4($sp)\n";
+  code += "lw	$s0,0($sp)\n";
+  code += "addiu	$sp, $sp, 8\n";
   // code += 'for (var ' + loopVar + ' = 0; ' +
 //       loopVar + ' < ' + endVar + '; ' +
 //       loopVar + '++) {\n' +

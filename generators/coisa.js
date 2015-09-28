@@ -158,7 +158,7 @@ Blockly.Coisa.finish = function(code) {
  * @return {string} Legal line of code.
  */
 Blockly.Coisa.scrubNakedValue = function(line) {
-  return line + ';\n';
+  return line;
 };
 
 /**
