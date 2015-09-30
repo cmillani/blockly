@@ -58,14 +58,14 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
   code += "addiu	$sp,$sp,-8\n";
   code += "sw	$s0,0($sp)\n";
   code += "sw	$s1,4($sp)\n";
-  code += "clear	$s0\n";
+  code += "li	$s0,0\n";
   code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
   code += "bge	$s0,$s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
 	
   code += repeats;
   
   code += "addiu	$s0, $s0, 1\n";
-  code += "j	dowhileloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  code += "j	repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
   code += "endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
   code += "lw	$s1,4($sp)\n";
   code += "lw	$s0,0($sp)\n";

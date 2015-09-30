@@ -32,7 +32,7 @@ goog.require('Blockly.Coisa');
 Blockly.Coisa['math_number'] = function(block) {
   // Numeric value.
   var immediate = parseInt(block.getFieldValue('NUM'));
-  var code = "li	$r1,"+immediate+"\n";
+  var code = "li	$s1,"+immediate+"\n";
   return [code, Blockly.Coisa.ORDER_NONE];
 };
 
