@@ -35,18 +35,21 @@ Blockly.Coisa['movement_robot'] = function(block) {
   {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 15\n";
+		code += "la	$t4, movmID\n";
 	  code += "syscall\n";
   }
   else if (dropdown_movement == "right")
   {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 16\n";
+		code += "la	$t4, movmID\n";
 	  code += "syscall\n";
   }
   else 
   {
 	  code = "li	$v0, 12\n";
 	  code += "li	$v1, 17\n";
+		code += "la $t4, movmID\n";
 	  code += "syscall\n";
   }
   return code;
@@ -55,6 +58,7 @@ Blockly.Coisa['movement_robot'] = function(block) {
 Blockly.Coisa['setup_movement'] = function(block) {
 	var code = "li	$v0, 12\n";
 	code+= "li	$v1, 18\n";
+	code+= "la	$t4, movmID\n";
 	code+= "syscall\n";
   return code;
 };

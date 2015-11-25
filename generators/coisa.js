@@ -139,6 +139,8 @@ Blockly.Coisa.init = function(workspace) {
 Blockly.Coisa.finish = function(code) {
   // Add crt0.s and the return to the code
   code = "li	$v0, 11\nsyscall\njal	main\nli	$v0, 10\nsyscall\nmain:\naddiu	$sp,$sp,-4\nsw	$ra,0($sp)\n"+code+"lw	$ra,0($sp)\naddiu	$sp,$sp, 4\njr	$ra\n";
+	code += ".data\n";
+	code += "movmID: .asciiz \"MOVM\"\n";
   // Convert the definitions dictionary into a list.
   var definitions = [];
   for (var name in Blockly.Coisa.definitions_) {
