@@ -51,6 +51,8 @@
 <script src="../generators/coisa/variables.js"></script>
 <script src="../generators/coisa/procedures.js"></script>
 <script src="../generators/coisa/movement.js"></script>
+<script src="../generators/coisa/assembler/decoder.js"></script>
+<script src="../generators/coisa/assembler/assembler.js"></script>
 
 <script src="../msg/messages.js"></script>
 <script src="../blocks/logic.js"></script>
@@ -128,6 +130,10 @@ function fromXml() {
 function toCode(lang) {
   var output = document.getElementById('importExport');
   output.value = Blockly[lang].workspaceToCode(workspace);
+  if (lang == 'Coisa')
+  {
+	var binary = Blockly.Coisa.Assembler.assembly(output.value);
+  }
 }
 
 function airstrike(n) {
