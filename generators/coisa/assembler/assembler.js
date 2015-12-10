@@ -12,6 +12,9 @@ Blockly.Coisa.Assembler = {
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 			}
+			else {
+				
+			}
 		}
 	},
 	instructions: [],
@@ -23,8 +26,8 @@ Blockly.Coisa.Assembler = {
 function Instruction(line)
 {
 	var splittedLine = line.replace("\t"," ").split(" ");
-	console.log(splittedLine);
 	var encoding = Decoder.getEncoding(splittedLine[0]);
+	console.log(splittedLine);
 	console.log(encoding);
 	if (encoding == Decoder.encodings.Register)
 	{

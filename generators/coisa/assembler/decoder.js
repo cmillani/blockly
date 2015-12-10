@@ -34,7 +34,10 @@ Decoder = {
 	//Gets the encoding of an instruction
 	getEncoding: function(instruction) {
 		instruction = instruction.toLowerCase();
-		return this.encodings.Register;
+		if(this.Instructions.Register.indexOf(instruction) != -1) return this.encodings.Register;
+		else if (this.Instructions.Immediate.indexOf(instruction) != -1) return this.encodings.Immediate;
+		else if (this.Instructions.Jump.indexOf(instruction) != -1) return this.encodings.Jump;
+		else return -1 //Error, TODO: Abort
 	},
 
 	//Gets "type" of a line
