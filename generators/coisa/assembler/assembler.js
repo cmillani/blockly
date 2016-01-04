@@ -12,45 +12,60 @@ Blockly.Coisa.Assembler = {
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 			}
-			else {
+			else if (Decoder.getType(lines[line]) == Decoder.types.Directive) {
 				
 			}
+			else if (Decoder.getType(lines[line]) == Decoder.types.Label) {
+				
+			}
+			else if (Decoder.getType(lines[line]) == Decoder.types.PseudoInstruction) {
+				
+			}
+		}
+		for (var instruction in this.instructions)
+		{
+			code += this.instructions[instruction].assembled();
 		}
 	},
 	instructions: [],
 	sections: [],
 	labels: [],
-	data: []
+	data: [],
+	code: ""
 };
 
 function Instruction(line)
 {
 	var splittedLine = line.replace("\t"," ").split(" ");
-	var encoding = Decoder.getEncoding(splittedLine[0]);
-	console.log(splittedLine);
-	console.log(encoding);
+	var instruction = splittedLine[0];
+	var params = splittedLine.slice(1,splittedLine.length).join().split(",");
+	var encoding = Decoder.getEncoding(instruction, params);
+
 	if (encoding == Decoder.encodings.Register)
 	{
-		var rs;
-		var rt;
-		var rd;
-		var shamt;
-		var funct;
+		var rs = params[0];
+		var rt = params[1];
+		var rd = params[2];
+		var shamt = params[3];
+		var funct = params[4];
 	}
 	else if (encoding == Decoder.encodings.Immediate)
 	{
-		var op;
-		var rs;
-		var rt;
-		var immediate;
+		var op = params[0];
+		var rs = params[1];
+		var rt = params[2];
+		var immediate = params[3];
 	}
 	else if (encoding == Decoder.encodings.Jump)
 	{
-		var op;
-		var address;
+		var op = params[0];
+		var address = params[1];
 	}
 	this.assembled = function()
 	{
-		return 0;
+		if (encoding == Decoder.encodings.Register) return Decoder.decodeR(instruction,[rs,rt,rd,shamt,funct]);
+		else if (encoding == Decoder.encodings.Immediate) return Decoder.decodeI(instruction,[op,rs,rt,immediate]);
+		else if (encoding == Decoder.encodings.Jump) return Decoder.decodeJ(instruction,[op,address]);
+		else return -1;
 	}
 };
