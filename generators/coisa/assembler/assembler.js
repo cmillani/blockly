@@ -11,12 +11,13 @@ Blockly.Coisa.Assembler = {
 		{
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
+				this.numberOfInstructions += 4;
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.Directive) {
-				
+				TranslateDirective(lines[line]);
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.Label) {
-				
+				this.labels.push(new Label(lines[line]));
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.PseudoInstruction) {
 				var splittedLine = lines[line].replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
@@ -27,24 +28,32 @@ Blockly.Coisa.Assembler = {
 				for (var item in translated)
 				{
 					this.instructions.push(new Instruction(translated[item]))
+					this.numberOfInstructions += 4;
 				}
 			}
 		}
 		for (var instruction in this.instructions)
 		{
 			var newC = this.instructions[instruction].assembled();
-			code += newC;
+			this.code.push((newC >> 24) & 0xFF);
+			this.code.push((newC >> 16) & 0xFF);
+			this.code.push((newC >> 8) & 0xFF);
+			this.code.push(newC & 0xFF);
 			// console.log(this.instructions[instruction].code)
-			console.log(newC.toString(16));
+			// console.log(newC.toString(16));
 			// console.log("---------------")
 			
 		}
 	},
+	currentSection: "text",
 	instructions: [],
-	sections: [],
 	labels: [],
+	numberOfInstructions: 0,
+	memoryPosition: function() {
+		return this.numberOfInstructions;
+	},
 	data: [],
-	code: ""
+	code: []
 };
 
 function Instruction(line)
@@ -80,4 +89,24 @@ function Instruction(line)
 		else if (encoding == Decoder.encodings.Jump) return Decoder.decodeJ(instruction,[address]);
 		else return -1;
 	}
+};
+
+function TranslateDirective(line)
+{
+	console.log("Dir:")
+	console.log(line);
+};
+function Label(line){
+	// console.log("Lab:")
+	// console.log(line);
+	// console.log(Blockly.Coisa.Assembler.memoryPosition());
+	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	var rest = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
+	this.position = Blockly.Coisa.Assembler.memoryPosition();
+	this.name = splittedLine[0]
+	if (rest){
+		console.log("AITEEEIMMM")
+	}
+	console.log(rest)
+	console.log(this.position);
 };
