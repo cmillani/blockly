@@ -9,6 +9,37 @@ Decoder = {
 		Immediate: "I",
 		Jump: "J"
 	},
+  
+  subEncodings: {
+    "R": {"movn":"ArithLog","movz":"ArithLog","add":"ArithLog","addu":"ArithLog","and":"ArithLog","div":"DivMult","divu":"DivMult",
+	             "mult":"DivMult","multu":"DivMult","nor":"ArithLog","or":"ArithLog","sll":"Shift","sllv":"ShiftV","sra":"Shift",
+	             "srav":"ShiftV","srl":"Shift","srlv":"ShiftV","sub":"ArithLog","subu":"ArithLog","xor":"ArithLog","slt":"ArithLog",
+	             "sltu":"ArithLog","jalr":"JumpR","jr":"JumpR","mfhi":"MoveFrom","mflo":"MoveFrom","mthi":"MoveTo","mtlo":"MoveTo",
+	             "syscall":"Trap"},
+	  "I": {"addi":"ArithLogI","addiu":"ArithLogI","andi":"ArithLogI","ori":"ArithLogI","xori":"ArithLogI","lui":"LoadI","lhi":"LoadI",
+		            "llo":"LoadI","slti":"ArithLogI","sltiu":"ArithLogI","bgez":"EspecialBranch","bgezal":"EspecialBranch","bltz":"EspecialBranch",
+		            "bltzal":"EspecialBranch","beq":"Branch","bne":"Branch","lb":"LoadStore","lbu":"LoadStore",
+		            "lh":"LoadStore","lhu":"LoadStore","lw":"LoadStore","sb":"LoadStore","sh":"LoadStore","sw":"LoadStore"},
+		"J": {"j":"Jump","jal":"Jump","trap":"Trap","swl":"LoadI","swr":"LoadI","lwl":"LoadI","lwr":"LoadI"}
+  },
+  
+  subEncodingsTypes: {
+    "ArithLog" : ["rd", "rs", "rt"],
+    "DivMult" : ["rs", "rt"],
+    "Shift" : ["rd", "rt", "shamt"],
+    "ShiftV" : ["rd", "rt", "rs"],
+    "JumpR" : ["rs"],
+    "MoveFrom" : ["rd"],
+    "MoveTo" : ["rs"],
+    "ArithLogI" : ["rt", "rs", "immediate"],
+    "LoadI" : ["rt", "immediate"], //i is high or low 16 bits of immed32
+    "Branch" : ["rs", "rt", "immediate"],  //i is calculated as (label - (current + 4)) >> 2
+    "BranchZ" : ["rs", "immediate"], //i is calculated as (label - (current + 4)) >> 2
+    "LoadStore" : ["rt", "immediate", "rs"],
+    "Jump" : ["immediate"], //i is calculated as (label - (current + 4)) >> 2
+    "Trap" : ["immediate"],
+    "EspecialBranch" : ["rs", "immediate"]
+  },
 
 	//"Types" of line 
 	types: {
@@ -59,27 +90,94 @@ Decoder = {
 		else if (line.indexOf(".") != -1) return this.types.Directive;
 		else return this.types.Instruction;
 	},
+  
+  organizeRegistersOrder: function(instruction, params, encoding)
+  {
+    var subEncoding = this.subEncodings[encoding][instruction]
+    if (typeof subEncoding != undefined)
+    {
+      var order = this.subEncodingsTypes[subEncoding];
+      var rs = 0
+      var rt = 0
+      var rd = 0
+      var shamt = 0
+      var immediate = 0
+      if (order.indexOf("rs") != -1) rs = this.Registers[params[order.indexOf("rs")].replace("$", "")];
+      if (order.indexOf("rt") != -1) rt = this.Registers[params[order.indexOf("rt")].replace("$", "")];
+      if (order.indexOf("rd") != -1) rd = this.Registers[params[order.indexOf("rd")].replace("$", "")];
+      if (order.indexOf("shamt") != -1) shamt = params[order.indexOf("shamt")].replace("$", "");
+      if (order.indexOf("immediate") != -1) immediate = params[order.indexOf("immediate")].replace("$", "");
+      return {rs: rs, rt: rt, rd: rd, shamt: shamt, immediate: immediate};
+    }
+    return null;
+  },
 	
 	translatePseudo: function(instruction, params)
 	{
-		// Pseudo: {"move":0,"clear":0,"not":0,"la":0,"li":0,"b":0,"bal":0,"bgt":0,"blt":0,"bge":0,"ble":0,"blez":0,"bgtu":0,"bgtz":0,"beqz":0,"mul":0,"div":0,"rem":0}
+		// Pseudo: {
+      if (instruction == "move") {
+        return(["add " + params[0] + "," + params[1] + "," + "$zero"]);
+      } else if (instruction == "clear") {
+        return(["add " + params[0] + "," + "$zero" + "," + "$zero"]);
+      } else if (instruction == "not") {
+        return(["nor " + params[0] + "," + params[1] + "," + "$zero"]);
+      } else if (instruction == "la") {
+        return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+      } else if (instruction == "li") {
+        return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+      } else if (instruction == "b") {
+        return(["beq " + "$zero" + "," + "$zero" + "," + params[0]]);
+      } else if (instruction == "bal") {
+        return(["bgezal " + "$zero" + "," + params[0]]);
+      } else if (instruction == "bgt") {
+        return(["slt " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+      } else if (instruction == "blt") {
+        return(["slt " + "$at" + "," + params[0] + "," + params[1], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+      } else if (instruction == "bge") {
+        return(["slt " + "$at" + "," + params[0] + "," + params[1], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
+      } else if (instruction == "ble") {
+        return(["slt " + "$at" + "," + params[1] + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
+      } else if (instruction == "blez") {
+        return(["slt " + "$at" + "," + "$zero" + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[1]]);
+      } else if (instruction == "bgtu") {
+        return(["sltu " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+      } else if (instruction == "bgtz") {
+        return(["slt " + "$at" + "," + "$zero" + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[1]]);
+      } else if (instruction == "beqz") {
+        return(["beq " + params[0] + "," + "$zero" + "," + params[1]]);
+      } else if (instruction == "mul") {
+        return(["mult " + params[1] + "," + params[2], "mflo " + params[0]]);
+      } else if (instruction == "div") { // div $d + "," + $s + "," + $t
+        return(["div " + params[1] + "," + params[2], "mflo " + params[0]]);
+      } else if (instruction == "rem") { // rem $d + "," + $s + "," + $t
+        return(["div " + params[1] + "," + params[2], "mfhi " + params[0]]);
+      }
+      return null
 	},
 	
 	decodeR: function(instruction, params) {
-    console.log(this.Instructions.Register[instruction])
-    var decoded = this.Instructions.Register[instruction]
+    var decoded = 0
+    decoded |= ((params[0] & 0b111111) << 21) 
+    decoded |= ((params[1] & 0b111111) << 16) 
+    decoded |= ((params[2] & 0b111111) << 11) 
+    decoded |= ((params[3] & 0b111111) << 8) 
+    decoded |= (this.Instructions.Register[instruction] & 0b111111) 
 		return decoded
 	},
 	
 	decodeI: function(instruction, params) {
-    console.log(this.Instructions.Immediate[instruction])
-    var decoded = this.Instructions.Immediate[instruction]
+    var decoded = 0
+    decoded |= ((this.Instructions.Immediate[instruction] & 0b111111) << 26)
+    decoded |= ((params[0] & 0b111111) << 21)
+    decoded |= ((params[1] & 0b111111) << 16)
+    decoded |= (params[2] & 0xFFFF)
 		return decoded
 	},
 	
 	decodeJ: function(instruction, params) {
-    console.log(this.Instructions.Jump[instruction])
-    var decoded = this.Instructions.Jump[instruction]
+    var decoded = 0
+    decoded |= ((this.Instructions.Jump[instruction] & 0b111111) << 26)
+    decoded |= (params[3] & 0x3FFFFFF)
 		return decoded
 	}
 }
