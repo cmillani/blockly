@@ -34,18 +34,42 @@ Blockly.Coisa.Assembler = {
 				for (var item in translated)
 				{
           // console.log(translated[item])
-					this.instructions.push(new Instruction(translated[item]))
+          // this.instructions.push(new Instruction(translated[item]))
 					this.numberOfInstructions += 4;
 				}
+        this.instructions.push(new Instruction(lines[line]))
 			}
 		}
 		for (var instruction in this.instructions)
 		{
-			var newC = this.instructions[instruction].assembled();
-			this.code.push(((newC >> 24) & 0xFF));
-			this.code.push(((newC >> 16) & 0xFF));
-			this.code.push(((newC >> 8) & 0xFF));
-			this.code.push((newC & 0xFF));//String.fromCharCode
+      if(this.instructions[instruction].isPseudo)
+      {
+        // console.log("pseudo");
+        // console.log(this.instructions[instruction].code)
+				var splittedLine = this.instructions[instruction].code.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				var instruction = splittedLine[0];
+				var params = splittedLine.slice(1,splittedLine.length).join().split(",");
+				var translated = Decoder.translatePseudo(instruction, params);
+				for (var item in translated)
+				{
+          // console.log(translated[item])
+          var instruct = new Instruction(translated[item])
+    			var newC = instruct.assembled();
+    			this.code.push(((newC >> 24) & 0xFF));
+    			this.code.push(((newC >> 16) & 0xFF));
+    			this.code.push(((newC >> 8) & 0xFF));
+    			this.code.push((newC & 0xFF));//String.fromCharCode
+           
+          // this.numberOfInstructions += 4;
+				}
+      } else {
+  			var newC = this.instructions[instruction].assembled();
+  			this.code.push(((newC >> 24) & 0xFF));
+  			this.code.push(((newC >> 16) & 0xFF));
+  			this.code.push(((newC >> 8) & 0xFF));
+  			this.code.push((newC & 0xFF));//String.fromCharCode
+      }
+			
 			// console.log(this.instructions[instruction].code)
       // console.log(newC.toString(16));
 			// console.log("---------------")
@@ -108,8 +132,11 @@ function Instruction(line)
 	var instruction = splittedLine[0];
 	var params = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
 	var encoding = Decoder.getEncoding(instruction, params);
-	var registers = Decoder.organizeRegistersOrder(instruction, params, encoding);
-
+  if (encoding != -1)
+  {
+	  var registers = Decoder.organizeRegistersOrder(instruction, params, encoding);
+  }
+  this.isPseudo = false
 	if (encoding == Decoder.encodings.Register)
 	{
 		var rs = registers["rs"];
@@ -127,6 +154,9 @@ function Instruction(line)
 	{
 		var address = registers["immediate"];
 	}
+  else { //Pseudo Instruction
+    this.isPseudo = true
+  }
 	this.code = line
 	this.assembled = function()
 	{
