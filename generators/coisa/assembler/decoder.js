@@ -61,7 +61,7 @@ Decoder = {
 		            "bltzal":0b000001,"beq":0b000100,"bne":0b000101,"lb":0b100000,"lbu":0b100100,
 		            "lh":0b100001,"lhu":0b100101,"lw":0b100011,"sb":0b101000,"sh":0b101001,"sw":0b101011},
 		Jump: {"j":0b000010,"jal":0b000011,"trap":0b011010,"swl":0b101010,"swr":0b101110,"lwl":0b100010,"lwr":0b100110},
-		Pseudo: {"move":0,"clear":0,"not":0,"la":0,"li":0,"b":0,"bal":0,"bgt":0,"blt":0,"bge":0,"ble":0,"blez":0,"bgtu":0,"bgtz":0,"beqz":0,"mul":0,"div":0,"rem":0}
+		Pseudo: {"move":0,"clear":0,"not":0,"la":0,"li":0,"b":0,"bal":0,"bgt":0,"blt":0,"bge":0,"ble":0,"blez":0,"bgtu":0,"bgtz":0,"beqz":0,"mul":0,"div":0,"rem":0,"nop":0}
 	},
 	
 	//Registersnames
@@ -97,11 +97,11 @@ Decoder = {
     if (typeof subEncoding != undefined)
     {
       var order = this.subEncodingsTypes[subEncoding];
-      var rs = 0
-      var rt = 0
-      var rd = 0
-      var shamt = 0
-      var immediate = 0
+      var rs
+      var rt
+      var rd
+      var shamt
+      var immediate
       if (order.indexOf("rs") != -1) rs = this.Registers[params[order.indexOf("rs")].replace("$", "")];
       if (order.indexOf("rt") != -1) rt = this.Registers[params[order.indexOf("rt")].replace("$", "")];
       if (order.indexOf("rd") != -1) rd = this.Registers[params[order.indexOf("rd")].replace("$", "")];
@@ -114,7 +114,9 @@ Decoder = {
 	
 	translatePseudo: function(instruction, params)
 	{
-		// Pseudo: {
+    // console.log(instruction)
+    // console.log(params)
+		// Pseudo:
       if (instruction == "move") {
         return(["add " + params[0] + "," + params[1] + "," + "$zero"]);
       } else if (instruction == "clear") {
@@ -122,9 +124,11 @@ Decoder = {
       } else if (instruction == "not") {
         return(["nor " + params[0] + "," + params[1] + "," + "$zero"]);
       } else if (instruction == "la") {
-        return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+        // return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+        return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
       } else if (instruction == "li") {
-        return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+        // return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+        return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
       } else if (instruction == "b") {
         return(["beq " + "$zero" + "," + "$zero" + "," + params[0]]);
       } else if (instruction == "bal") {
@@ -151,33 +155,70 @@ Decoder = {
         return(["div " + params[1] + "," + params[2], "mflo " + params[0]]);
       } else if (instruction == "rem") { // rem $d + "," + $s + "," + $t
         return(["div " + params[1] + "," + params[2], "mfhi " + params[0]]);
+      } else if (instruction == "nop") {
+        return(["sll $zero, $zero, 0"]);
       }
       return null
 	},
 	
 	decodeR: function(instruction, params) {
     var decoded = 0
-    decoded |= ((params[0] & 0b111111) << 21) 
-    decoded |= ((params[1] & 0b111111) << 16) 
-    decoded |= ((params[2] & 0b111111) << 11) 
-    decoded |= ((params[3] & 0b111111) << 8) 
+    // console.log(params)
+    decoded |= ((params["rs"] & 0b111111) << 21) 
+    decoded |= ((params["rt"] & 0b111111) << 16) 
+    decoded |= ((params["rd"] & 0b111111) << 11) 
+    decoded |= ((params["shamt"] & 0b111111) << 8) 
     decoded |= (this.Instructions.Register[instruction] & 0b111111) 
 		return decoded
 	},
 	
 	decodeI: function(instruction, params) {
     var decoded = 0
+    // console.log(params)
     decoded |= ((this.Instructions.Immediate[instruction] & 0b111111) << 26)
     decoded |= ((params[0] & 0b111111) << 21)
     decoded |= ((params[1] & 0b111111) << 16)
-    decoded |= (params[2] & 0xFFFF)
+    var immediate = params[2];
+    if (isNaN(parseInt(immediate)))
+    {
+      // console.log(Blockly.Coisa.Assembler.labels[immediate])
+      // console.log(Blockly.Coisa.Assembler.labels)
+      // console.log(immediate);
+      // console.log(instruction);
+      immediate = Blockly.Coisa.Assembler.labels[immediate]
+      if (instruction == "lui")
+      {
+        immediate = immediate >> 16 & 0xFFFF
+      } else if (instruction == "ori"){
+        immediate = immediate & 0xFFFF
+      } else {
+        immediate = immediate >> 2
+      }
+      // console.log(immediate);
+    }
+    // console.log(immediate);
+    decoded |= (immediate & 0xFFFF)
+    // console.log(decoded)
 		return decoded
 	},
 	
 	decodeJ: function(instruction, params) {
     var decoded = 0
+    // console.log(params)
     decoded |= ((this.Instructions.Jump[instruction] & 0b111111) << 26)
-    decoded |= (params[3] & 0x3FFFFFF)
+    var immediate = params[0];
+    if (isNaN(parseInt(immediate)))
+    {
+      // console.log(Blockly.Coisa.Assembler.labels[immediate])
+      // console.log(instruction);
+      // console.log(Blockly.Coisa.Assembler.labels)
+      // console.log(immediate);
+      immediate = Blockly.Coisa.Assembler.labels[immediate] >> 2
+      // console.log(immediate);
+    }
+    // console.log(immediate);
+    decoded |= (immediate & 0x3FFFFFF)
+    // console.log(decoded)
 		return decoded
 	}
 }

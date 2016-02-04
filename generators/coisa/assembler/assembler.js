@@ -6,9 +6,15 @@ goog.require('Decoder');
 
 Blockly.Coisa.Assembler = {
 	assembly: function(code) {
+    this.code = [];
+    this.data = [];
+    this.labels = {};
+    this.currentSection = "text";
+    this.numberOfInstructions = 0;
 		var lines = code.split("\n");
 		for (var line in lines)
 		{
+      // console.log(lines[line])
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 				this.numberOfInstructions += 4;
@@ -17,7 +23,7 @@ Blockly.Coisa.Assembler = {
 				TranslateDirective(lines[line]);
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.Label) {
-				this.labels.push(new Label(lines[line]));
+				Label(lines[line]);
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.PseudoInstruction) {
 				var splittedLine = lines[line].replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
@@ -27,6 +33,7 @@ Blockly.Coisa.Assembler = {
 				// console.log(translated)
 				for (var item in translated)
 				{
+          // console.log(translated[item])
 					this.instructions.push(new Instruction(translated[item]))
 					this.numberOfInstructions += 4;
 				}
@@ -35,19 +42,32 @@ Blockly.Coisa.Assembler = {
 		for (var instruction in this.instructions)
 		{
 			var newC = this.instructions[instruction].assembled();
-			this.code.push((newC >> 24) & 0xFF);
-			this.code.push((newC >> 16) & 0xFF);
-			this.code.push((newC >> 8) & 0xFF);
-			this.code.push(newC & 0xFF);
+			this.code.push(((newC >> 24) & 0xFF));
+			this.code.push(((newC >> 16) & 0xFF));
+			this.code.push(((newC >> 8) & 0xFF));
+			this.code.push((newC & 0xFF));//String.fromCharCode
 			// console.log(this.instructions[instruction].code)
-			// console.log(newC.toString(16));
+      // console.log(newC.toString(16));
 			// console.log("---------------")
 			
 		}
+		for (var char in this.data)
+		{
+			// console.log(this.data[char]);
+			this.code.push(this.data[char].charCodeAt(0));
+		}
+		// console.log(this.code)
+		// for (var item in this.code)
+//     {
+//       console.log(this.code[item].charCodeAt(0).toString(16))
+//     }
+		// console.log(this.code.join(""));
+		return this.code
+		// console.log(this.data);
 	},
 	currentSection: "text",
 	instructions: [],
-	labels: [],
+	labels: {},
 	numberOfInstructions: 0,
 	memoryPosition: function() {
 		return this.numberOfInstructions;
@@ -55,6 +75,32 @@ Blockly.Coisa.Assembler = {
 	data: [],
 	code: []
 };
+
+function InterpretLine(line)
+{
+	if (line && Decoder.getType(line) == Decoder.types.Instruction) {
+		Blockly.Coisa.Assembler.instructions.push(new Instruction(line));
+		Blockly.Coisa.Assembler.numberOfInstructions += 4;
+	}
+	else if (Decoder.getType(line) == Decoder.types.Directive) {
+		TranslateDirective(line);
+	}
+	else if (Decoder.getType(line) == Decoder.types.Label) {
+		Blockly.Coisa.Assembler.labels.push(new Label(line));
+	}
+	else if (Decoder.getType(line) == Decoder.types.PseudoInstruction) {
+		var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+		var instruction = splittedLine[0];
+		var params = splittedLine.slice(1,splittedLine.length).join().split(",");
+		var translated = Decoder.translatePseudo(instruction, params);
+		// console.log(translated)
+		for (var item in translated)
+		{
+			Blockly.Coisa.Assembler.instructions.push(new Instruction(translated[item]))
+			Blockly.Coisa.Assembler.numberOfInstructions += 4;
+		}
+	}
+}
 
 function Instruction(line)
 {
@@ -66,20 +112,20 @@ function Instruction(line)
 
 	if (encoding == Decoder.encodings.Register)
 	{
-		var rs = registers["rs"] | 0;
-		var rt = registers["rt"] | 0;
-		var rd = registers["rd"] | 0;
-		var shamt = registers["shamt"] | 0;
+		var rs = registers["rs"];
+		var rt = registers["rt"];
+		var rd = registers["rd"];
+		var shamt = registers["shamt"];
 	}
 	else if (encoding == Decoder.encodings.Immediate)
 	{
-		var rs = registers["rs"] | 0;
-		var rt = registers["rt"] | 0;
-		var immediate = registers["immediate"] | 0;
+		var rs = registers["rs"];
+		var rt = registers["rt"];
+		var immediate = registers["immediate"];
 	}
 	else if (encoding == Decoder.encodings.Jump)
 	{
-		var address = registers["immediate"] | 0;
+		var address = registers["immediate"];
 	}
 	this.code = line
 	this.assembled = function()
@@ -91,22 +137,62 @@ function Instruction(line)
 	}
 };
 
+
+
 function TranslateDirective(line)
 {
-	console.log("Dir:")
-	console.log(line);
+	// console.log(line)
+	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	var params = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
+	var command = splittedLine[0];
+	// console.log(command);
+	if (command == ".data")
+	{
+		
+	} 
+	else if (command == ".asciiz")
+	{
+		// console.log(params[0].length)
+		var theString = params[0].replace("\"","").replace("\"","");
+		for (var i = 0; i < theString.length; i++)
+		{
+			Blockly.Coisa.Assembler.data.push(theString.charAt(i))
+		}
+	}
 };
+
+function ClearArray(array)
+{
+	var newArray = []
+	for (var item in array)
+	{
+		if (array[item])
+		{
+			newArray.push(array[item]);
+		}
+	}
+	return newArray;
+}
+
 function Label(line){
 	// console.log("Lab:")
 	// console.log(line);
 	// console.log(Blockly.Coisa.Assembler.memoryPosition());
 	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
-	var rest = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
-	this.position = Blockly.Coisa.Assembler.memoryPosition();
-	this.name = splittedLine[0]
-	if (rest){
-		console.log("AITEEEIMMM")
+	var command = splittedLine.slice(1,splittedLine.length).join(" ").split(/[,]+/);
+	var position = Blockly.Coisa.Assembler.memoryPosition();
+	var theName = splittedLine[0]
+	// console.log(theName);
+	// console.log(position);
+	// console.log()
+	Blockly.Coisa.Assembler.labels[theName.replace(":","")] = position;
+	// console.log(Blockly.Coisa.Assembler.labels);
+	command = ClearArray(command);
+	// console.log(Object.keys(command).length);
+	if (Object.keys(command).length > 0){
+		// console.log("AITEEEIMMM");
+		// console.log(command[0]);
+		InterpretLine(command.join(" "));
 	}
-	console.log(rest)
-	console.log(this.position);
+	// console.log(this.position);
 };

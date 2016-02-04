@@ -52,6 +52,7 @@
 <script src="../generators/coisa/procedures.js"></script>
 <script src="../generators/coisa/movement.js"></script>
 <script src="../generators/coisa/assembler/decoder.js"></script>
+<script src="../generators/coisa/FileSaver.js/FileSaver.min.js"></script>
 <script src="../generators/coisa/assembler/assembler.js"></script>
 
 <script src="../msg/messages.js"></script>
@@ -132,7 +133,47 @@ function toCode(lang) {
   output.value = Blockly[lang].workspaceToCode(workspace);
   if (lang == 'Coisa')
   {
-	var binary = Blockly.Coisa.Assembler.assembly(output.value);
+    var binary = Blockly.Coisa.Assembler.assembly(output.value);
+    // console.log(binary);
+	var byteArray = new Uint8Array(binary);
+	for (var x = 0; x < byteArray.length; x++){
+	    byteArray[x] = binary[x];
+		// console.log(byteArray[x])
+	}
+    // var blob = new Blob(binary);//Application/binary // application/octet-stream
+	var blob = new Blob([byteArray], {type: "application/octet-stream"});
+    saveAs(blob, "data.x");
+    // var objectURL = URL.createObjectURL(blob);
+    // document.getElementById("myLink").setAttribute("href",blob);
+    // console.log(objectURL);
+    // window.open(objectURL);
+    // window.open('data:attachment/csv;charset=utf-8,' + encodeURI(binary));
+    // console.log(a);
+    // var downloadFile = function downloadFile(content, filename) {
+//       var supportsDownloadAttribute = 'download' in document.createElement('a');
+//
+//       if(supportsDownloadAttribute) {
+//           console.log("a");
+//         var link = angular.element('<a/>');
+//         link.attr({
+//           href: 'data:attachment/csv;base64,' + encodeURI($window.btoa(content)),
+//           target: '_blank',
+//           download: filename
+//         })[0].click();
+//         $timeout(function() {
+//           link.remove();
+//         }, 50);
+//       } else if(Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) {
+//           // console.log("b");
+//         window.open('data:attachment/csv;charset=utf-8,' + encodeURI(content));
+//       } else {
+//           // console.log("c");
+//           // console.log(Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0);
+//         var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+//         saveAs(blob, filename);
+//       }
+//     }
+//     downloadFile(binary, "file.x");
   }
 }
 
@@ -496,7 +537,11 @@ h1 {
   </p>
 
   <!-- Realtime setup buttons. -->
-
+    <!-- <div id ="download">
+        <a id="myLink" download="nada">
+            <p>Hahahaha</p>
+        </a>
+    </div> -->
   <div id="realtime" style="display: none">
 
     <p>Test realtime collaboration by opening

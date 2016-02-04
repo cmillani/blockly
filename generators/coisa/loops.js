@@ -62,11 +62,13 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
 	code += repeats; //Loads the control variable
   code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
   code += "bge	$s0,$s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  code += "nop\n";
 	
 	code += branch; //Gets the code inside the loop
   
   code += "addiu	$s0, $s0, 1\n";
   code += "j	repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+  code += "nop\n";
   code += "endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
   code += "lw	$s1,4($sp)\n";
   code += "lw	$s0,0($sp)\n";
