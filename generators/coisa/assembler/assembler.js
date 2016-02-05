@@ -184,10 +184,28 @@ function TranslateDirective(line)
 	{
 		// console.log(params[0].length)
 		var theString = params[0].replace("\"","").replace("\"","");
+    var special = false
 		for (var i = 0; i < theString.length; i++)
 		{
-			Blockly.Coisa.Assembler.data.push(theString.charAt(i))
+      if (theString.charAt(i) == "\\")
+      {
+        special = true
+      }
+      if (!special)
+      {
+			  Blockly.Coisa.Assembler.data.push(theString.charAt(i))
+        Blockly.Coisa.Assembler.numberOfInstructions += 1;
+      } else {
+        if (theString.charAt(i) == "n")
+        {
+  			  Blockly.Coisa.Assembler.data.push("\n")
+          Blockly.Coisa.Assembler.numberOfInstructions += 1;
+        }
+      }
 		}
+		Blockly.Coisa.Assembler.data.push('\0')
+    Blockly.Coisa.Assembler.numberOfInstructions += 1;
+    
 	}
 };
 
@@ -216,6 +234,7 @@ function Label(line){
 	// console.log(position);
 	// console.log()
 	Blockly.Coisa.Assembler.labels[theName.replace(":","")] = position;
+  console.log(Blockly.Coisa.Assembler.labels);
 	// console.log(Blockly.Coisa.Assembler.labels);
 	command = ClearArray(command);
 	// console.log(Object.keys(command).length);

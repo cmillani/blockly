@@ -28,11 +28,23 @@ goog.provide('Blockly.Coisa.texts');
 
 goog.require('Blockly.Coisa');
 
-
 Blockly.Coisa['text'] = function(block) {
   // Text value.
-  var code = Blockly.Coisa.quote_(block.getFieldValue('TEXT'));
-  return [code, Blockly.Coisa.ORDER_ATOMIC];
+  if(!Blockly.Coisa['text'].count)
+  {
+    Blockly.Coisa['text'].count = 0;
+  }
+  Blockly.Coisa['text'].count += 1;
+	
+  var code = "la	$s2, " + "text" + Blockly.Coisa['text'].count + "\n";
+	
+	if (Blockly.Coisa.additionalData)
+	{
+		Blockly.Coisa.additionalData += "text" + Blockly.Coisa['text'].count + ":\t.asciiz \"" + (block.getFieldValue('TEXT')) + "\\n\"\n"; 
+	} else {
+		Blockly.Coisa.additionalData = "text" + Blockly.Coisa['text'].count + ":\t.asciiz \"" + (block.getFieldValue('TEXT')) + "\\n\"\n"; 
+	}
+  return [code, Blockly.Coisa.ORDER_NONE];
 };
 
 Blockly.Coisa['text_join'] = function(block) {

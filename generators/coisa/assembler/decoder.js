@@ -117,48 +117,63 @@ Decoder = {
     // console.log(instruction)
     // console.log(params)
 		// Pseudo:
-      if (instruction == "move") {
-        return(["add " + params[0] + "," + params[1] + "," + "$zero"]);
-      } else if (instruction == "clear") {
-        return(["add " + params[0] + "," + "$zero" + "," + "$zero"]);
-      } else if (instruction == "not") {
-        return(["nor " + params[0] + "," + params[1] + "," + "$zero"]);
-      } else if (instruction == "la") {
-        // return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
-        return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
-      } else if (instruction == "li") {
-        // return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
-        return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
-      } else if (instruction == "b") {
-        return(["beq " + "$zero" + "," + "$zero" + "," + params[0]]);
-      } else if (instruction == "bal") {
-        return(["bgezal " + "$zero" + "," + params[0]]);
-      } else if (instruction == "bgt") {
-        return(["slt " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
-      } else if (instruction == "blt") {
-        return(["slt " + "$at" + "," + params[0] + "," + params[1], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
-      } else if (instruction == "bge") {
-        return(["slt " + "$at" + "," + params[0] + "," + params[1], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
-      } else if (instruction == "ble") {
-        return(["slt " + "$at" + "," + params[1] + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
-      } else if (instruction == "blez") {
-        return(["slt " + "$at" + "," + "$zero" + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[1]]);
-      } else if (instruction == "bgtu") {
-        return(["sltu " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
-      } else if (instruction == "bgtz") {
-        return(["slt " + "$at" + "," + "$zero" + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[1]]);
-      } else if (instruction == "beqz") {
-        return(["beq " + params[0] + "," + "$zero" + "," + params[1]]);
-      } else if (instruction == "mul") {
-        return(["mult " + params[1] + "," + params[2], "mflo " + params[0]]);
-      } else if (instruction == "div") { // div $d + "," + $s + "," + $t
-        return(["div " + params[1] + "," + params[2], "mflo " + params[0]]);
-      } else if (instruction == "rem") { // rem $d + "," + $s + "," + $t
-        return(["div " + params[1] + "," + params[2], "mfhi " + params[0]]);
-      } else if (instruction == "nop") {
-        return(["sll $zero, $zero, 0"]);
+    for (var i in params)
+    {
+      if (isNaN(parseInt(params[i])))
+      {
+        // console.log(Blockly.Coisa.Assembler.labels[immediate])
+        // console.log(instruction);
+        // console.log(Blockly.Coisa.Assembler.labels)
+        // console.log(immediate);
+        if (Blockly.Coisa.Assembler.labels[params[i]] != undefined)
+        {
+          params[i] = Blockly.Coisa.Assembler.labels[params[i]];
+        }
+        // console.log(immediate);
       }
-      return null
+    }
+    if (instruction == "move") {
+      return(["add " + params[0] + "," + params[1] + "," + "$zero"]);
+    } else if (instruction == "clear") {
+      return(["add " + params[0] + "," + "$zero" + "," + "$zero"]);
+    } else if (instruction == "not") {
+      return(["nor " + params[0] + "," + params[1] + "," + "$zero"]);
+    } else if (instruction == "la") {
+      return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+      // return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
+    } else if (instruction == "li") {
+      return(["lui " + params[0] + "," + ((params[1] >> 16) & 0xFFFF), "ori " + params[0] + "," + params[0] + "," + (params[1] & 0xFFFF)]);
+      // return(["lui " + params[0] + "," + params[1], "ori " + params[0] + "," + params[0] + "," + params[1]]);
+    } else if (instruction == "b") {
+      return(["beq " + "$zero" + "," + "$zero" + "," + params[0]]);
+    } else if (instruction == "bal") {
+      return(["bgezal " + "$zero" + "," + params[0]]);
+    } else if (instruction == "bgt") {
+      return(["slt " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+    } else if (instruction == "blt") {
+      return(["slt " + "$at" + "," + params[0] + "," + params[1], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+    } else if (instruction == "bge") {
+      return(["slt " + "$at" + "," + params[0] + "," + params[1], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
+    } else if (instruction == "ble") {
+      return(["slt " + "$at" + "," + params[1] + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
+    } else if (instruction == "blez") {
+      return(["slt " + "$at" + "," + "$zero" + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[1]]);
+    } else if (instruction == "bgtu") {
+      return(["sltu " + "$at" + "," + params[1] + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
+    } else if (instruction == "bgtz") {
+      return(["slt " + "$at" + "," + "$zero" + "," + params[0], "bne " + "$at" + "," + "$zero" + "," + params[1]]);
+    } else if (instruction == "beqz") {
+      return(["beq " + params[0] + "," + "$zero" + "," + params[1]]);
+    } else if (instruction == "mul") {
+      return(["mult " + params[1] + "," + params[2], "mflo " + params[0]]);
+    } else if (instruction == "div") { // div $d + "," + $s + "," + $t
+      return(["div " + params[1] + "," + params[2], "mflo " + params[0]]);
+    } else if (instruction == "rem") { // rem $d + "," + $s + "," + $t
+      return(["div " + params[1] + "," + params[2], "mfhi " + params[0]]);
+    } else if (instruction == "nop") {
+      return(["sll $zero, $zero, 0"]);
+    }
+    return null
 	},
 	
 	decodeR: function(instruction, params) {
@@ -186,14 +201,14 @@ Decoder = {
       // console.log(immediate);
       // console.log(instruction);
       immediate = Blockly.Coisa.Assembler.labels[immediate]
-      if (instruction == "lui")
-      {
-        immediate = immediate >> 16 & 0xFFFF
-      } else if (instruction == "ori"){
-        immediate = immediate & 0xFFFF
-      } else {
-        immediate = immediate >> 2
-      }
+      // if (instruction == "lui")
+//       {
+//         immediate = immediate >> 16 & 0xFFFF
+//       } else if (instruction == "ori"){
+//         immediate = immediate & 0xFFFF
+//       } else {
+//         immediate = immediate >> 2
+//       }
       // console.log(immediate);
     }
     // console.log(immediate);

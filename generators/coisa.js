@@ -141,6 +141,12 @@ Blockly.Coisa.finish = function(code) {
   code = "li	$v0, 11\nsyscall\njal	main\nnop\nli	$v0, 10\nsyscall\nmain:\naddiu	$sp,$sp,-4\nsw	$ra,0($sp)\n"+code+"lw	$ra,0($sp)\naddiu	$sp,$sp, 4\njr	$ra\nnop\n";
 	code += ".data\n";
 	code += "movmID: .asciiz \"MOVM\"\n";
+  code += "rxtxID: .asciiz \"RXTX\"\n";
+  if (Blockly.Coisa.additionalData)
+  {
+    code += Blockly.Coisa.additionalData;
+  }
+  
   // Convert the definitions dictionary into a list.
   var definitions = [];
   for (var name in Blockly.Coisa.definitions_) {
