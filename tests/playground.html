@@ -132,10 +132,12 @@ function fromXml() {
 
 function toCode(lang) {
   var output = document.getElementById('importExport');
-  output.value = Blockly[lang].workspaceToCode(workspace);
+  var text = Blockly[lang].workspaceToCode(workspace);
+  output.value = text;
+  // console.log(text);
   if (lang == 'Coisa')
   {
-    var binary = Blockly.Coisa.Assembler.assembly(output.value);
+    var binary = Blockly.Coisa.Assembler.assembly(text);
     // console.log(binary);
 	var byteArray = new Uint8Array(binary);
 	for (var x = 0; x < byteArray.length; x++){
@@ -274,7 +276,13 @@ h1 {
           </block>
         </value>
 	  </block>
-      <block type="serial_print"></block>
+      <block type="serial_print">
+        <value name="TEXT">
+          <block type="text">
+            <field name="TEXT">Hello World</field>
+          </block>
+        </value>
+      </block>
     </category>
     <category name="Loops">
       <block type="controls_repeat_ext">
@@ -508,6 +516,8 @@ h1 {
     <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')">
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"></textarea>
+	Terminal:
+	<textarea id="terminal" style="width: 26%; height: 12em"></textarea>
   </p>
   <hr>
 

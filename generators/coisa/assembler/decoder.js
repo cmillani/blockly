@@ -79,16 +79,27 @@ Decoder = {
 		else if (typeof this.Instructions.Register[instruction] != 'undefined') return this.encodings.Register; //TODO: typeof aproach may not work on old browsers
 		else if (typeof this.Instructions.Immediate[instruction] != 'undefined') return this.encodings.Immediate;
 		else if (typeof this.Instructions.Jump[instruction] != 'undefined') return this.encodings.Jump;
-		else console.log(instruction);
+		// else console.log(instruction);
+		console.log("Encoding Pseudo?");
 		return -1 //Error, TODO: Abort
 	},
 
 	//Gets "type" of a line
 	getType: function(line) {
-		if (typeof this.Instructions.Pseudo[line.replace("\t"," ").split(" ")[0].toLowerCase()] != 'undefined') return this.types.PseudoInstruction;
-		else if (line.indexOf(":") != -1) return this.types.Label;
-		else if (line.indexOf(".") != -1) return this.types.Directive;
-		else return this.types.Instruction;
+		var op = line.replace("\t"," ").split(/[ ]+/)[0]
+		if (op == "")
+		{
+			op = line.replace("\t"," ").split(/[ ]+/)[1]
+		}
+		// console.log(line.replace("\t"," ").split(" "))
+		console.log(op);
+		if (op){
+			if (typeof this.Instructions.Pseudo[op.toLowerCase()] != 'undefined') return this.types.PseudoInstruction;
+			else if (line.indexOf(":") != -1) return this.types.Label;
+			else if (line.indexOf(".") != -1) return this.types.Directive;
+			else return this.types.Instruction;
+		}
+		else return -1
 	},
   
   organizeRegistersOrder: function(instruction, params, encoding)
@@ -109,10 +120,11 @@ Decoder = {
       if (order.indexOf("immediate") != -1) immediate = params[order.indexOf("immediate")].replace("$", "");
       return {rs: rs, rt: rt, rd: rd, shamt: shamt, immediate: immediate};
     }
+		console.log("FATAL ERROR HERE<<<<<<<<<<<<<<<<<<<<<<<<");
     return null;
   },
 	
-	translatePseudo: function(instruction, params)
+	translatePseudo: function(instruction, params, position)
 	{
     // console.log(instruction)
     // console.log(params)
@@ -153,6 +165,13 @@ Decoder = {
     } else if (instruction == "blt") {
       return(["slt " + "$at" + "," + params[0] + "," + params[1], "bne " + "$at" + "," + "$zero" + "," + params[2]]);
     } else if (instruction == "bge") {
+			// console.log(instruction)
+			// console.log(params)
+			if (position)
+			{
+				params[2] = (params[2] - position) >> 2;
+			}
+			// console.log(params)
       return(["slt " + "$at" + "," + params[0] + "," + params[1], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
     } else if (instruction == "ble") {
       return(["slt " + "$at" + "," + params[1] + "," + params[0], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
@@ -173,6 +192,9 @@ Decoder = {
     } else if (instruction == "nop") {
       return(["sll $zero, $zero, 0"]);
     }
+		console.log("FATAL ERROR HERE<<<<<<<<<<<<<<<<<<<<<<<<");
+		console.log(instruction);
+		console.log(params);
     return null
 	},
 	

@@ -44,14 +44,24 @@ Blockly.Coisa['serial_printnum'] = function(block) {
 
 Blockly.Coisa['serial_print'] = function(block) {
   var value_text = Blockly.Coisa.valueToCode(block, 'TEXT', Blockly.Coisa.ORDER_NONE);
-  console.log(value_text)
+
   var code = '';
 	code += value_text;
+// addiu	$sp,$sp,-16
+// sw	$v0,0($sp)
+// sw	$v1,4($sp)
+// sw	$t4,8($sp)
+// sw	$a0,16($sp)
   code += "li	$v0, 12\n";
   code += "li	$v1, 14\n";
-	code += "la $t4, rxtxID\n";
+	code += "la	$t4, rxtxID\n";
 	code += "move	$a0, $s2\n";
   code += "syscall\n";
+// lw	$a0,16($sp)
+// lw	$t4,8($sp)
+// lw	$v1,4($sp)
+// lw	$v0,0($sp)
+// addiu	$sp, $sp, 16
   return code;
 };
 // .data

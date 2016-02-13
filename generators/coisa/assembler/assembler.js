@@ -11,10 +11,12 @@ Blockly.Coisa.Assembler = {
     this.labels = {};
     this.currentSection = "text";
     this.numberOfInstructions = 0;
+    this.instructions = [];
 		var lines = code.split("\n");
 		for (var line in lines)
 		{
-      // console.log(lines[line])
+			console.log(this.numberOfInstructions)
+      console.log(lines[line])
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 				this.numberOfInstructions += 4;
@@ -27,9 +29,14 @@ Blockly.Coisa.Assembler = {
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.PseudoInstruction) {
 				var splittedLine = lines[line].replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				if (splittedLine[0] == "")
+				{
+					splittedLine = splittedLine.slice(1,splittedLine.length);
+				}
 				var instruction = splittedLine[0];
 				var params = splittedLine.slice(1,splittedLine.length).join().split(",");
 				var translated = Decoder.translatePseudo(instruction, params);
+				// console.log(translated)
 				// console.log(translated)
 				for (var item in translated)
 				{
@@ -42,14 +49,21 @@ Blockly.Coisa.Assembler = {
 		}
 		for (var instruction in this.instructions)
 		{
+			// console.log(this.instructions[instruction])
+			console.log(this.instructions[instruction].code)
       if(this.instructions[instruction].isPseudo)
       {
         // console.log("pseudo");
-        // console.log(this.instructions[instruction].code)
+        // console.log(this.instructions[instruction])
+				var number = this.instructions[instruction].lineNumber;
 				var splittedLine = this.instructions[instruction].code.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				if (splittedLine[0] == "")
+				{
+					splittedLine = splittedLine.slice(1,splittedLine.length);
+				}
 				var instruction = splittedLine[0];
 				var params = splittedLine.slice(1,splittedLine.length).join().split(",");
-				var translated = Decoder.translatePseudo(instruction, params);
+				var translated = Decoder.translatePseudo(instruction, params, number);
 				for (var item in translated)
 				{
           // console.log(translated[item])
@@ -59,7 +73,7 @@ Blockly.Coisa.Assembler = {
     			this.code.push(((newC >> 16) & 0xFF));
     			this.code.push(((newC >> 8) & 0xFF));
     			this.code.push((newC & 0xFF));//String.fromCharCode
-           
+					console.log(newC.toString(16));
           // this.numberOfInstructions += 4;
 				}
       } else {
@@ -68,11 +82,11 @@ Blockly.Coisa.Assembler = {
   			this.code.push(((newC >> 16) & 0xFF));
   			this.code.push(((newC >> 8) & 0xFF));
   			this.code.push((newC & 0xFF));//String.fromCharCode
+				console.log(newC.toString(16));
       }
 			
 			// console.log(this.instructions[instruction].code)
-      // console.log(newC.toString(16));
-			// console.log("---------------")
+			console.log("---------------")
 			
 		}
 		for (var char in this.data)
@@ -114,21 +128,32 @@ function InterpretLine(line)
 	}
 	else if (Decoder.getType(line) == Decoder.types.PseudoInstruction) {
 		var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+		if (splittedLine[0] == "")
+		{
+			splittedLine = splittedLine.slice(1,splittedLine.length);
+		}
 		var instruction = splittedLine[0];
 		var params = splittedLine.slice(1,splittedLine.length).join().split(",");
 		var translated = Decoder.translatePseudo(instruction, params);
 		// console.log(translated)
+		// console.log(translated)
 		for (var item in translated)
 		{
-			Blockly.Coisa.Assembler.instructions.push(new Instruction(translated[item]))
+			// Blockly.Coisa.Assembler.instructions.push(new Instruction(translated[item]))
 			Blockly.Coisa.Assembler.numberOfInstructions += 4;
 		}
+		Blockly.Coisa.Assembler.instructions.push(new Instruction(line))
 	}
 }
 
 function Instruction(line)
 {
 	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	if (splittedLine[0] == "")
+	{
+		splittedLine = splittedLine.slice(1,splittedLine.length);
+		// console.log(splittedLine)
+	}
 	var instruction = splittedLine[0];
 	var params = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
 	var encoding = Decoder.getEncoding(instruction, params);
@@ -157,13 +182,17 @@ function Instruction(line)
   else { //Pseudo Instruction
     this.isPseudo = true
   }
+	this.lineNumber = Blockly.Coisa.Assembler.numberOfInstructions;
 	this.code = line
 	this.assembled = function()
 	{
 		if (encoding == Decoder.encodings.Register) return Decoder.decodeR(instruction,{rs: rs,rt: rt,rd: rd,shamt: shamt});
 		else if (encoding == Decoder.encodings.Immediate) return Decoder.decodeI(instruction,[rs,rt,immediate]);
 		else if (encoding == Decoder.encodings.Jump) return Decoder.decodeJ(instruction,[address]);
-		else return -1;
+		else {
+			console.log("FATAL ERROR HERE<<<<<<<<<<<<<<<<<<<<<<<<");
+			return -1;
+		}
 	}
 };
 
@@ -182,8 +211,10 @@ function TranslateDirective(line)
 	} 
 	else if (command == ".asciiz")
 	{
-		// console.log(params[0].length)
-		var theString = params[0].replace("\"","").replace("\"","");
+    params = params.join(" ")
+    // console.log(params)
+		var theString = params.replace("\"","").replace("\"","");
+    // console.log(theString);
     var special = false
 		for (var i = 0; i < theString.length; i++)
 		{
@@ -234,8 +265,8 @@ function Label(line){
 	// console.log(position);
 	// console.log()
 	Blockly.Coisa.Assembler.labels[theName.replace(":","")] = position;
-  console.log(Blockly.Coisa.Assembler.labels);
-	// console.log(Blockly.Coisa.Assembler.labels);
+  // console.log(Blockly.Coisa.Assembler.labels);
+	console.log(Blockly.Coisa.Assembler.labels);
 	command = ClearArray(command);
 	// console.log(Object.keys(command).length);
 	if (Object.keys(command).length > 0){

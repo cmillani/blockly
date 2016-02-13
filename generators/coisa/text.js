@@ -38,6 +38,8 @@ Blockly.Coisa['text'] = function(block) {
 	
   var code = "la	$s2, " + "text" + Blockly.Coisa['text'].count + "\n";
 	
+	// console.log(block.getFieldValue('TEXT'))
+	
 	if (Blockly.Coisa.additionalData)
 	{
 		Blockly.Coisa.additionalData += "text" + Blockly.Coisa['text'].count + ":\t.asciiz \"" + (block.getFieldValue('TEXT')) + "\\n\"\n"; 

@@ -138,6 +138,25 @@ Blockly.Coisa.init = function(workspace) {
  */
 Blockly.Coisa.finish = function(code) {
   // Add crt0.s and the return to the code
+						// _start:
+						// 	li	$v0, 11
+						// 	syscall
+						// 	li	$v0, 9
+						// 	li	$v1, ev_handler
+						// 	syscall
+						// 	jal	main
+						// 	li	$v0, 10
+						// 	syscall
+						//
+						// ev_handler:
+						// 	li	$v0, 11
+						// 	syscall
+						// 	li	$ra, event_end
+						// 	jr	$a0
+						//
+						// event_end:
+						// 	li	$v0, 10
+						// 	syscall
   code = "li	$v0, 11\nsyscall\njal	main\nnop\nli	$v0, 10\nsyscall\nmain:\naddiu	$sp,$sp,-4\nsw	$ra,0($sp)\n"+code+"lw	$ra,0($sp)\naddiu	$sp,$sp, 4\njr	$ra\nnop\n";
 	code += ".data\n";
 	code += "movmID: .asciiz \"MOVM\"\n";
@@ -153,6 +172,7 @@ Blockly.Coisa.finish = function(code) {
     definitions.push(Blockly.Coisa.definitions_[name]);
   }
   // Clean up temporary data.
+  delete Blockly.Coisa.additionalData
   delete Blockly.Coisa.definitions_;
   delete Blockly.Coisa.functionNames_;
   Blockly.Coisa.variableDB_.reset();

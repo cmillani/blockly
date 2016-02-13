@@ -38,7 +38,7 @@ Blockly.Blocks['movement_robot'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("Move")
-        .appendField(new Blockly.FieldDropdown([["Ahead", "ahead"], ["Clockwise", "right"], ["Anticlockwise", "left"]]), "movement");
+        .appendField(new Blockly.FieldDropdown([["Ahead", "ahead"], ["Clockwise", "right"], ["Counterclockwise", "left"]]), "movement");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);
