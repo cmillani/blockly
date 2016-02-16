@@ -58,3 +58,48 @@ Blockly.Blocks['setup_movement'] = {
     this.setHelpUrl('http://www.google.com/');
   }
 };
+
+Blockly.Blocks['go_forward'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Go Forward");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};
+Blockly.Blocks['go_left'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Go Left");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};
+Blockly.Blocks['go_right'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Go Right");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};
+Blockly.Blocks['stop'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Stop Robot");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};

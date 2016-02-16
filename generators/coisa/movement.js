@@ -62,3 +62,32 @@ Blockly.Coisa['setup_movement'] = function(block) {
 	code+= "syscall\n";
   return code;
 };
+
+Blockly.Coisa['go_forward'] = function(block) {
+	var code = "li	$v0, 12\n";
+	code+= "li	$v1, 21\n";
+	code+= "la	$t4, movmID\n";
+	code+= "syscall\n";
+  return code;
+};
+Blockly.Coisa['go_left'] = function(block) {
+	var code = "li	$v0, 12\n";
+	code+= "li	$v1, 22\n";
+	code+= "la	$t4, movmID\n";
+	code+= "syscall\n";
+  return code;
+};
+Blockly.Coisa['go_right'] = function(block) {
+	var code = "li	$v0, 12\n";
+	code+= "li	$v1, 23\n";
+	code+= "la	$t4, movmID\n";
+	code+= "syscall\n";
+  return code;
+};
+Blockly.Coisa['stop'] = function(block) {
+	var code = "li	$v0, 12\n";
+	code+= "li	$v1, 24\n";
+	code+= "la	$t4, movmID\n";
+	code+= "syscall\n";
+  return code;
+};
