@@ -140,26 +140,30 @@ Blockly.Coisa.finish = function(code) {
 	var final_code = "li	$v0, 11\n";
 	final_code += "syscall\n";
 	final_code += "li	$v0, 9\n"
-	final_code += "li $v1, ev_handler\n"
+	final_code += "li	$v1, ev_handler\n"
 	final_code += "syscall\n";
 	final_code += "jal	main\n";
 	final_code += "nop\n";
 	final_code += "li	$v0, 10\n";
 	final_code += "syscall\n";
+	
 	final_code += code;
+	
 	final_code += "ev_handler:\n";
 	final_code += "li	$v0, 11\n";
 	final_code += "syscall\n";
 	final_code += "li	$ra, event_end\n";
 	final_code += "jr	$a0\n";
+	final_code += "nop\n";
+	
 	final_code += "event_end:\n";
 	final_code += "li	$v0, 10\n";
 	final_code += "syscall\n";
 	final_code += ".data\n";
-	final_code += "movmID: .asciiz \"MOVM\"\n";
-  final_code += "rxtxID: .asciiz \"RXTX\"\n";
-	final_code += "btogID: .asciiz \"BTOG\"\n";
-	final_code += "usID: .asciiz \"US_S\"\n";
+	final_code += "movmID:	.asciiz \"MOVM\"\n";
+  final_code += "rxtxID:	.asciiz \"RXTX\"\n";
+	final_code += "btogID:	.asciiz \"BTOG\"\n";
+	final_code += "usID:	.asciiz \"US_S\"\n";
 	
 	code = final_code
 	
@@ -167,6 +171,16 @@ Blockly.Coisa.finish = function(code) {
   {
     code += Blockly.Coisa.additionalData;
   }
+	
+	if(!Blockly.Coisa['events_init'])
+	{
+		Blockly.Coisa['events_init'] = ""
+		// console.log(">>>>>>>Events Initialization");
+		// console.log(Blockly.Coisa['events_init']);
+	} 
+	// console.log(">>>>>>>Events Initialization");
+	// console.log(Blockly.Coisa['events_init']);
+	code = code.replace("#handlers_register#\n", Blockly.Coisa['events_init']);
   
   // Convert the definitions dictionary into a list.
   var definitions = [];
@@ -174,7 +188,9 @@ Blockly.Coisa.finish = function(code) {
     definitions.push(Blockly.Coisa.definitions_[name]);
   }
   // Clean up temporary data.
-  delete Blockly.Coisa.additionalData
+	delete Blockly.Coisa['events_init'];
+  delete Blockly.Coisa.additionalData;
+	
   delete Blockly.Coisa.definitions_;
   delete Blockly.Coisa.functionNames_;
   Blockly.Coisa.variableDB_.reset();

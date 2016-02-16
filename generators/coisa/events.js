@@ -34,7 +34,7 @@ Blockly.Coisa['event_onstart'] = function(block) {
 	code += "addiu	$sp,$sp,-4\n";
 	code += "sw	$ra,0($sp)\n";
 	code += statements_name;
-	code += "handlers_register:\n"
+	code += "#handlers_register#\n"
 	code += "lw	$ra,0($sp)\n";
 	code += "addiu	$sp,$sp, 4\n";
 	code += "jr	$ra\n";
@@ -61,12 +61,18 @@ Blockly.Coisa['event_btdown'] = function(block) {
 		Blockly.Coisa['events_init'] = ""
 	} 
 	
-	Blockly.Coisa.Initializations += "li		$a0, 0\n";
-	Blockly.Coisa.Initializations += "li		$a1, 5\n";
-	Blockly.Coisa.Initializations += "li		$v0, 12\n";
-	Blockly.Coisa.Initializations += "li		$v1, 21\n";
-	Blockly.Coisa.Initializations += "la 		$t4, btogID\n";
-	Blockly.Coisa.Initializations += "syscall\n";
+	Blockly.Coisa['events_init'] += "li	$a0, 0\n";
+	Blockly.Coisa['events_init'] += "li	$a1, 5\n";
+	Blockly.Coisa['events_init'] += "li	$v0, 12\n";
+	Blockly.Coisa['events_init'] += "li	$v1, 21\n";
+	Blockly.Coisa['events_init'] += "la	$t4, btogID\n";
+	Blockly.Coisa['events_init'] += "syscall\n";
+	
+	Blockly.Coisa['events_init'] += "li	$a0, 1\n";
+	Blockly.Coisa['events_init'] += "la	$a1, btdown\n";
+	Blockly.Coisa['events_init'] += "la	$a2, btogID\n";
+	Blockly.Coisa['events_init'] += "li	$v0, 14\n";
+	Blockly.Coisa['events_init'] += "syscall\n";
 	
   return code;
 };
@@ -75,6 +81,8 @@ Blockly.Coisa['event_distancechange'] = function(block) {
   var value_threshold = Blockly.Coisa.valueToCode(block, 'threshold', Blockly.Coisa.ORDER_NONE);
   var statements_codecloser = Blockly.Coisa.statementToCode(block, 'CodeCloser');
   var statements_codelarger = Blockly.Coisa.statementToCode(block, 'CodeLarger');
+
+	//US Event must be adapted in order to work with this -> one event to closer, one to larger, and change registration method
 
 	var code = "distancechange:\n"
 	code += "addiu	$sp,$sp,-4\n";
@@ -90,10 +98,17 @@ Blockly.Coisa['event_distancechange'] = function(block) {
 		Blockly.Coisa['events_init'] = ""
 	} 
 	
-	Blockly.Coisa.Initializations += "li		$v0, 12\n";
-	Blockly.Coisa.Initializations += "li		$v1, 2\n";
-	Blockly.Coisa.Initializations += "la 		$t4, usID\n";
-	Blockly.Coisa.Initializations += "syscall\n";
+	Blockly.Coisa['events_init'] += "li	$v0, 12\n";
+	Blockly.Coisa['events_init'] += "li	$v1, 2\n";
+	Blockly.Coisa['events_init'] += "la	$t4, usID\n";
+	Blockly.Coisa['events_init'] += "syscall\n";
+	Blockly.Coisa['events_init'] += "li	$a0, 1\n";
+	Blockly.Coisa['events_init'] += "la	$a1, distancechange\n";
+	Blockly.Coisa['events_init'] += "la	$a2, usID\n"
+	Blockly.Coisa['events_init'] += value_threshold
+	Blockly.Coisa['events_init'] += "move	$a3, $s1\n";
+	Blockly.Coisa['events_init'] += "li	$v0, 14\n";
+	Blockly.Coisa['events_init'] += "syscall\n";
 	
   return code;
 };

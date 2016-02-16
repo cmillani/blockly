@@ -15,8 +15,8 @@ Blockly.Coisa.Assembler = {
 		var lines = code.split("\n");
 		for (var line in lines)
 		{
-			console.log(this.numberOfInstructions)
-      console.log(lines[line])
+			// console.log(this.numberOfInstructions)
+      // console.log(lines[line])
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 				this.numberOfInstructions += 4;
@@ -50,7 +50,7 @@ Blockly.Coisa.Assembler = {
 		for (var instruction in this.instructions)
 		{
 			// console.log(this.instructions[instruction])
-			console.log(this.instructions[instruction].code)
+			// console.log(this.instructions[instruction].code)
       if(this.instructions[instruction].isPseudo)
       {
         // console.log("pseudo");
@@ -73,7 +73,7 @@ Blockly.Coisa.Assembler = {
     			this.code.push(((newC >> 16) & 0xFF));
     			this.code.push(((newC >> 8) & 0xFF));
     			this.code.push((newC & 0xFF));//String.fromCharCode
-					console.log(newC.toString(16));
+					// console.log(newC.toString(16));
           // this.numberOfInstructions += 4;
 				}
       } else {
@@ -82,11 +82,11 @@ Blockly.Coisa.Assembler = {
   			this.code.push(((newC >> 16) & 0xFF));
   			this.code.push(((newC >> 8) & 0xFF));
   			this.code.push((newC & 0xFF));//String.fromCharCode
-				console.log(newC.toString(16));
+				// console.log(newC.toString(16));
       }
 			
 			// console.log(this.instructions[instruction].code)
-			console.log("---------------")
+			// console.log("---------------")
 			
 		}
 		for (var char in this.data)
@@ -266,7 +266,7 @@ function Label(line){
 	// console.log()
 	Blockly.Coisa.Assembler.labels[theName.replace(":","")] = position;
   // console.log(Blockly.Coisa.Assembler.labels);
-	console.log(Blockly.Coisa.Assembler.labels);
+	// console.log(Blockly.Coisa.Assembler.labels);
 	command = ClearArray(command);
 	// console.log(Object.keys(command).length);
 	if (Object.keys(command).length > 0){

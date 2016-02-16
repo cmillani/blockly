@@ -80,7 +80,7 @@ Decoder = {
 		else if (typeof this.Instructions.Immediate[instruction] != 'undefined') return this.encodings.Immediate;
 		else if (typeof this.Instructions.Jump[instruction] != 'undefined') return this.encodings.Jump;
 		// else console.log(instruction);
-		console.log("Encoding Pseudo?");
+		// console.log("Encoding Pseudo?");
 		return -1 //Error, TODO: Abort
 	},
 
@@ -92,7 +92,7 @@ Decoder = {
 			op = line.replace("\t"," ").split(/[ ]+/)[1]
 		}
 		// console.log(line.replace("\t"," ").split(" "))
-		console.log(op);
+		// console.log(op);
 		if (op){
 			if (typeof this.Instructions.Pseudo[op.toLowerCase()] != 'undefined') return this.types.PseudoInstruction;
 			else if (line.indexOf(":") != -1) return this.types.Label;
