@@ -52,6 +52,8 @@
 <script src="../generators/coisa/procedures.js"></script>
 <script src="../generators/coisa/movement.js"></script>
 <script src="../generators/coisa/serial.js"></script>
+<script src="../generators/coisa/events.js"></script>
+
 <script src="../generators/coisa/assembler/decoder.js"></script>
 <script src="../generators/coisa/FileSaver.js/FileSaver.min.js"></script>
 <script src="../generators/coisa/assembler/assembler.js"></script>
@@ -68,6 +70,7 @@
 
 <script src="../blocks/movement.js"></script>
 <script src="../blocks/serial.js"></script>
+<script src="../blocks/events.js"></script>
 <!-- Load the Google Drive SDK Realtime libraries. -->
 <script src="https://apis.google.com/js/api.js"></script>
 <script>
@@ -114,6 +117,12 @@ function start() {
   if (Blockly.Realtime.isEnabled()) {
     enableRealtimeSpecificUi();
   }
+  var xmlInit = [
+	  '<xml xmlns="http://www.w3.org/1999/xhtml">' +
+	  '	<block type="event_onstart" x="313" y="263"></block>' +
+	  '</xml>'].join('\n');
+  var dom = Blockly.Xml.textToDom(xmlInit);
+  Blockly.Xml.domToWorkspace(workspace, dom);
 }
 
 function toXml() {
@@ -130,7 +139,7 @@ function fromXml() {
   Blockly.Xml.domToWorkspace(workspace, xml);
 }
 
-function toCode(lang) {
+function toCode(lang, download) {
   var output = document.getElementById('importExport');
   var text = Blockly[lang].workspaceToCode(workspace);
   output.value = text;
@@ -145,9 +154,14 @@ function toCode(lang) {
 		// console.log(byteArray[x])
 	}
     // var blob = new Blob(binary);//Application/binary // application/octet-stream
-	var blob = new Blob([byteArray], {type: "application/octet-stream"});
-    saveAs(blob, "data.x");
+	if (download)
+	{
+		var blob = new Blob([byteArray], {type: "application/octet-stream"});
+	    saveAs(blob, "data.x");
+	}
   }
+  
+  
 }
 
 function airstrike(n) {
@@ -263,6 +277,17 @@ h1 {
       <block type="logic_boolean"></block>
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
+    </category>
+    <category name="Events">
+	  <block type="event_onstart"></block>
+	  <block type="event_btdown"></block>
+      <block type="event_distancechange">
+        <value name="threshold">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
     </category>
     <category name="Movement">
 	  <block type="setup_movement"></block>
@@ -514,6 +539,8 @@ h1 {
     <input type="button" value="To Dart" onclick="toCode('Dart')">
     &nbsp;
     <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')">
+    &nbsp;
+    <input type="button" value="Download Coisa binary (WIP)" onclick="toCode('Coisa', true)">
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"></textarea>
 	Terminal:

@@ -137,30 +137,32 @@ Blockly.Coisa.init = function(workspace) {
  * @return {string} Completed code.
  */
 Blockly.Coisa.finish = function(code) {
-  // Add crt0.s and the return to the code
-						// _start:
-						// 	li	$v0, 11
-						// 	syscall
-						// 	li	$v0, 9
-						// 	li	$v1, ev_handler
-						// 	syscall
-						// 	jal	main
-						// 	li	$v0, 10
-						// 	syscall
-						//
-						// ev_handler:
-						// 	li	$v0, 11
-						// 	syscall
-						// 	li	$ra, event_end
-						// 	jr	$a0
-						//
-						// event_end:
-						// 	li	$v0, 10
-						// 	syscall
-  code = "li	$v0, 11\nsyscall\njal	main\nnop\nli	$v0, 10\nsyscall\nmain:\naddiu	$sp,$sp,-4\nsw	$ra,0($sp)\n"+code+"lw	$ra,0($sp)\naddiu	$sp,$sp, 4\njr	$ra\nnop\n";
-	code += ".data\n";
-	code += "movmID: .asciiz \"MOVM\"\n";
-  code += "rxtxID: .asciiz \"RXTX\"\n";
+	var final_code = "li	$v0, 11\n";
+	final_code += "syscall\n";
+	final_code += "li	$v0, 9\n"
+	final_code += "li $v1, ev_handler\n"
+	final_code += "syscall\n";
+	final_code += "jal	main\n";
+	final_code += "nop\n";
+	final_code += "li	$v0, 10\n";
+	final_code += "syscall\n";
+	final_code += code;
+	final_code += "ev_handler:\n";
+	final_code += "li	$v0, 11\n";
+	final_code += "syscall\n";
+	final_code += "li	$ra, event_end\n";
+	final_code += "jr	$a0\n";
+	final_code += "event_end:\n";
+	final_code += "li	$v0, 10\n";
+	final_code += "syscall\n";
+	final_code += ".data\n";
+	final_code += "movmID: .asciiz \"MOVM\"\n";
+  final_code += "rxtxID: .asciiz \"RXTX\"\n";
+	final_code += "btogID: .asciiz \"BTOG\"\n";
+	final_code += "usID: .asciiz \"US_S\"\n";
+	
+	code = final_code
+	
   if (Blockly.Coisa.additionalData)
   {
     code += Blockly.Coisa.additionalData;
