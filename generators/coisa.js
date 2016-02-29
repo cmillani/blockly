@@ -165,6 +165,7 @@ Blockly.Coisa.finish = function(code) {
 	final_code += "btogID:	.asciiz \"BTOG\"\n";
 	final_code += "usID:	.asciiz \"US_S\"\n";
 	final_code += "usIDf:	.asciiz \"US_F\"\n";
+	final_code += "ledID:	.asciiz \"LEDS\"\n";
 	
 	code = final_code
 	
