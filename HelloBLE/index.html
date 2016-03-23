@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>HelloBLE</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <script>
+    // function hello(){
+    //   console.log("Seek");
+    //   navigator.bluetooth.requestDevice({ filters: [{ services: [0xFFE0] }] })
+    //   .then(device => {
+    //     console.log(device);
+    //     return device.connectGATT();})
+    //   .then(server => {
+    //     console.log("WorkingServer");
+    //     console.log(server);})
+    //   .catch(error => { 
+    //     console.log(error); 
+    //   });
+    // }
+    function hello(){
+      console.log("Seek");
+      navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
+      .then(device => {
+        console.log(device);
+        return device.connectGATT();
+      })
+      .then(server => {
+        console.log(server);
+        return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb')
+      })
+      .then(service => {
+        console.log(service);
+      })
+      .catch(error => { console.log(error); });
+    }
+  </script>
+  <div id="greeting"></div>
+  <script src="main.js"></script> 
+  <input type="button" value="BT" onclick="hello()">
+</body>
+</html>
