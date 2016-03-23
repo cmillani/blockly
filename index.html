@@ -3,7 +3,10 @@
 <html>
 <head>
   <title>HelloBLE</title>
-
+  <script>
+  if (window.location.protocol != "https:")
+      window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 
