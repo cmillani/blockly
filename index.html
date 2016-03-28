@@ -443,7 +443,12 @@
           })
           .then(characteristic => {
             console.log(characteristic)
-            var buffer = new Uint8Array([1]);
+            var buffer = new ArrayBuffer(4);
+            var view = new Uint8Array(buffer);
+            view[0] = 111;
+            view[1] = 107;
+            view[2] = 13;
+            view[3] = 10;
             characteristic.writeValue(buffer);
           })
           .catch(error => { 
