@@ -431,7 +431,7 @@
           navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
           .then(device => {
             console.log(device);
-            return device.gatt.connect();
+            return device.connectGATT();
           })
           .then(server => {
             console.log(server);
