@@ -11,21 +11,478 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="blockly_uncompressed.js"></script>
+  <script src="generators/javascript.js"></script>
+  <script src="generators/javascript/logic.js"></script>
+  <script src="generators/javascript/loops.js"></script>
+  <script src="generators/javascript/math.js"></script>
+  <script src="generators/javascript/text.js"></script>
+  <script src="generators/javascript/lists.js"></script>
+  <script src="generators/javascript/colour.js"></script>
+  <script src="generators/javascript/variables.js"></script>
+  <script src="generators/javascript/procedures.js"></script>
+  <script src="generators/php.js"></script>
+  <script src="generators/php/logic.js"></script>
+  <script src="generators/php/loops.js"></script>
+  <script src="generators/php/math.js"></script>
+  <script src="generators/php/text.js"></script>
+  <script src="generators/php/lists.js"></script>
+  <script src="generators/php/colour.js"></script>
+  <script src="generators/php/variables.js"></script>
+  <script src="generators/php/procedures.js"></script>
+  <script src="generators/python.js"></script>
+  <script src="generators/python/logic.js"></script>
+  <script src="generators/python/loops.js"></script>
+  <script src="generators/python/math.js"></script>
+  <script src="generators/python/text.js"></script>
+  <script src="generators/python/lists.js"></script>
+  <script src="generators/python/colour.js"></script>
+  <script src="generators/python/variables.js"></script>
+  <script src="generators/python/procedures.js"></script>
+  <script src="generators/dart.js"></script>
+  <script src="generators/dart/logic.js"></script>
+  <script src="generators/dart/loops.js"></script>
+  <script src="generators/dart/math.js"></script>
+  <script src="generators/dart/text.js"></script>
+  <script src="generators/dart/lists.js"></script>
+  <script src="generators/dart/colour.js"></script>
+  <script src="generators/dart/variables.js"></script>
+  <script src="generators/dart/procedures.js"></script>
+
+  <script src="generators/coisa.js"></script>
+  <script src="generators/coisa/logic.js"></script>
+  <script src="generators/coisa/loops.js"></script>
+  <script src="generators/coisa/math.js"></script>
+  <script src="generators/coisa/text.js"></script>
+  <script src="generators/coisa/lists.js"></script>
+  <script src="generators/coisa/colour.js"></script>
+  <script src="generators/coisa/variables.js"></script>
+  <script src="generators/coisa/procedures.js"></script>
+  <script src="generators/coisa/movement.js"></script>
+  <script src="generators/coisa/serial.js"></script>
+  <script src="generators/coisa/events.js"></script>
+  <script src="generators/coisa/leds.js"></script>
+
+  <script src="generators/coisa/assembler/decoder.js"></script>
+  <script src="generators/coisa/FileSaver.js/FileSaver.min.js"></script>
+  <script src="generators/coisa/assembler/assembler.js"></script>
+
+  <script src="msg/messages.js"></script>
+  <script src="blocks/logic.js"></script>
+  <script src="blocks/loops.js"></script>
+  <script src="blocks/math.js"></script>
+  <script src="blocks/text.js"></script>
+  <script src="blocks/lists.js"></script>
+  <script src="blocks/colour.js"></script>
+  <script src="blocks/variables.js"></script>
+  <script src="blocks/procedures.js"></script>
+  <script src="blocks/leds.js"></script>
+
+  <script src="blocks/movement.js"></script>
+  <script src="blocks/serial.js"></script>
+  <script src="blocks/events.js"></script>
+  <!-- Load the Google Drive SDK Realtime libraries. -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  
+  <script src="sweetalert/dist/sweetalert.min.js"></script> 
+  <link rel="stylesheet" type="text/css" href="sweetalert/dist/sweetalert.css">
+  
+  <script>
+  'use strict';
+  // Depending on the URL argument, render as LTR or RTL.
+  var rtl = (document.location.search == '?rtl');
+  var workspace = null;
+
+  function enableRealtimeSpecificUi() {
+    var realtimeDiv = document.getElementById('realtime');
+    realtimeDiv.display = 'block';
+  }
+
+  function start() {
+    var toolbox = document.getElementById('toolbox');
+    workspace = Blockly.inject('blocklyDiv',
+            {comments: true,
+             disable: true,
+             collapse: true,
+             grid:
+               {spacing: 25,
+                length: 3,
+                colour: '#ccc',
+                snap: true},
+             media: 'media/',
+             readOnly: false,
+             realtime: false,
+             realtimeOptions:
+               {clientId: 'YOUR CLIENT ID GOES HERE',
+                chatbox: {elementId: 'chatbox'},
+                collabElementId: 'collaborators'},
+             rtl: rtl,
+             scrollbars: true,
+             toolbox: toolbox,
+             zoom:
+               {enabled: true,
+                controls: true,
+                wheel: true,
+                maxScale: 2,
+                minScale: .1,
+                scaleSpeed: 1.1
+               },
+            });
+    if (Blockly.Realtime.isEnabled()) {
+      enableRealtimeSpecificUi();
+    }
+    var xmlInit = [
+  	  '<xml xmlns="http://www.w3.org/1999/xhtml">' +
+  	  '	<block type="event_onstart" x="313" y="263"></block>' +
+  	  '</xml>'].join('\n');
+    var dom = Blockly.Xml.textToDom(xmlInit);
+    Blockly.Xml.domToWorkspace(workspace, dom);
+  }
+
+  function toXml() {
+    var output = document.getElementById('importExport');
+    var xml = Blockly.Xml.workspaceToDom(workspace);
+    output.value = Blockly.Xml.domToPrettyText(xml);
+    output.focus();
+    output.select();
+  }
+
+  function fromXml() {
+    var input = document.getElementById('importExport');
+    var xml = Blockly.Xml.textToDom(input.value);
+    Blockly.Xml.domToWorkspace(workspace, xml);
+  }
+
+  function toCode(lang, download, upload) {
+    var text = Blockly[lang].workspaceToCode(workspace);
+    // console.log(text);
+    if (lang == 'Coisa')
+    {
+      var binary = Blockly.Coisa.Assembler.assembly(text);
+      // console.log(binary);
+    	var byteArray = new Uint8Array(binary);
+    	for (var x = 0; x < byteArray.length; x++){
+    	    byteArray[x] = binary[x];
+    		// console.log(byteArray[x])
+    	}
+        // var blob = new Blob(binary);//Application/binary // application/octet-stream
+    	if (download)
+    	{
+    		var blob = new Blob([byteArray], {type: "application/octet-stream"});
+    	    saveAs(blob, "data.x");
+    	}
+      
+      if (upload)
+      {
+        navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
+        .then(device => {
+          console.log(device);
+          return device.connectGATT();
+        })
+        .then(server => {
+          console.log(server);
+          return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb')
+        })
+        .then(service => {
+          console.log(service);
+        })
+        .catch(error => { 
+          console.log(error); 
+          swal({   title: "Error!",   text: "Bluetooth Error :(\n Check Configuration tab!",   type: "error",   confirmButtonText: "Cool" });
+        });
+      }
+    }
+  
+  
+  }
+  </script>
 </head>
-<body>
+<body onload="start()">
 
 <div class="container">
   <h2>COISA Unchained</h2>
   <ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#home">SDK</a></li>
-    <li><a data-toggle="pill" href="#config">Configuration</a></li>
-    <li><a data-toggle="pill" href="#about">About</a></li>
+<!--  "javascript:void(workspace.setVisible(true))" -->
+
+    <li class="active" id="homeBut"><a data-toggle="pill" href="#home">SDK</a></li>
+    <li id="configBut"><a data-toggle="pill" href="#config">Configuration</a></li>
+    <li id="aboutBut"><a data-toggle="pill" href="#about">About</a></li>
   </ul>
   
   <div class="tab-content">
     <div id="home" class="tab-pane fade in active">
+      <script>
+      // start();
+      // concole.log("Olar");
+      </script>
       <h3>SDK</h3>
-      <p>COISA SDK here (this is just a placeholder ;) ).</p>
+      <p>
+        <input type="button" value="Export to XML" onclick="toXml()">
+        &nbsp;
+        <input type="button" value="Import from XML" onclick="fromXml()">
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <!-- <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')"> -->
+        <!-- &nbsp; -->
+        <input type="button" value="Download Coisa binary (WIP)" onclick="toCode('Coisa', true)">
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <input type="button" value="Upload Coisa binary (WIP)" onclick="toCode('Coisa', false, true)">
+      </p>
+      <div id="blocklyDiv" style="height: 400px; width: 100%;"></div>
+      <xml id="toolbox" style="display: none">
+        <category name="Logic">
+          <block type="controls_if"></block>
+          <block type="logic_compare"></block>
+          <block type="logic_operation"></block>
+          <block type="logic_negate"></block>
+          <block type="logic_boolean"></block>
+          <block type="logic_null"></block>
+          <block type="logic_ternary"></block>
+        </category>
+        <category name="Events">
+    	  <block type="event_onstart"></block>
+    	  <block type="event_btdown"></block>
+          <block type="event_distancechange">
+            <value name="threshold">
+              <block type="math_number">
+                <field name="NUM">10</field>
+              </block>
+            </value>
+          </block>
+        </category>
+        <category name="Lights">
+    	  <block type="led_red"></block>
+    	  <block type="led_green"></block>
+        </category>
+        <category name="Movement">
+    	  <block type="setup_movement"></block>
+          <block type="movement_robot"></block>
+    	  <block type="go_forward"></block>
+    	  <block type="go_left"></block>
+    	  <block type="go_right"></block>
+    	  <block type="stop"></block>
+        </category>
+        <category name="Serial">
+    	  <block type="serial_printnum">
+            <value name="NUM">
+              <block type="math_number">
+                <field name="NUM">0</field>
+              </block>
+            </value>
+    	  </block>
+          <block type="serial_print">
+            <value name="TEXT">
+              <block type="text">
+                <field name="TEXT">Hello World</field>
+              </block>
+            </value>
+          </block>
+        </category>
+        <category name="Loops">
+          <block type="controls_repeat_ext">
+            <value name="TIMES">
+              <block type="math_number">
+                <field name="NUM">10</field>
+              </block>
+            </value>
+          </block>
+          <block type="controls_whileUntil"></block>
+          <block type="controls_for">
+            <value name="FROM">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+            <value name="TO">
+              <block type="math_number">
+                <field name="NUM">10</field>
+              </block>
+            </value>
+            <value name="BY">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+          </block>
+          <block type="controls_forEach"></block>
+          <block type="controls_flow_statements"></block>
+        </category>
+        <category name="Math">
+          <block type="math_number"></block>
+          <block type="math_arithmetic"></block>
+          <block type="math_single"></block>
+          <block type="math_trig"></block>
+          <block type="math_constant"></block>
+          <block type="math_number_property"></block>
+          <block type="math_change">
+            <value name="DELTA">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+          </block>
+          <block type="math_round"></block>
+          <block type="math_on_list"></block>
+          <block type="math_modulo"></block>
+          <block type="math_constrain">
+            <value name="LOW">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+            <value name="HIGH">
+              <block type="math_number">
+                <field name="NUM">100</field>
+              </block>
+            </value>
+          </block>
+          <block type="math_random_int">
+            <value name="FROM">
+              <block type="math_number">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+            <value name="TO">
+              <block type="math_number">
+                <field name="NUM">100</field>
+              </block>
+            </value>
+          </block>
+          <block type="math_random_float"></block>
+        </category>
+        <category name="Text">
+          <block type="text"></block>
+          <block type="text_join"></block>
+          <block type="text_append">
+            <value name="TEXT">
+              <block type="text"></block>
+            </value>
+          </block>
+          <block type="text_length"></block>
+          <block type="text_isEmpty"></block>
+          <block type="text_indexOf">
+            <value name="VALUE">
+              <block type="variables_get">
+                <field name="VAR">text</field>
+              </block>
+            </value>
+          </block>
+          <block type="text_charAt">
+            <value name="VALUE">
+              <block type="variables_get">
+                <field name="VAR">text</field>
+              </block>
+            </value>
+          </block>
+          <block type="text_getSubstring">
+            <value name="STRING">
+              <block type="variables_get">
+                <field name="VAR">text</field>
+              </block>
+            </value>
+          </block>
+          <block type="text_changeCase"></block>
+          <block type="text_trim"></block>
+          <block type="text_print"></block>
+          <block type="text_prompt_ext">
+            <value name="TEXT">
+              <block type="text"></block>
+            </value>
+          </block>
+        </category>
+        <category name="Lists">
+          <block type="lists_create_empty"></block>
+          <block type="lists_create_with"></block>
+          <block type="lists_repeat">
+            <value name="NUM">
+              <block type="math_number">
+                <field name="NUM">5</field>
+              </block>
+            </value>
+          </block>
+          <block type="lists_length"></block>
+          <block type="lists_isEmpty"></block>
+          <block type="lists_indexOf">
+            <value name="VALUE">
+              <block type="variables_get">
+                <field name="VAR">list</field>
+              </block>
+            </value>
+          </block>
+          <block type="lists_getIndex">
+            <value name="VALUE">
+              <block type="variables_get">
+                <field name="VAR">list</field>
+              </block>
+            </value>
+          </block>
+          <block type="lists_setIndex">
+            <value name="LIST">
+              <block type="variables_get">
+                <field name="VAR">list</field>
+              </block>
+            </value>
+          </block>
+          <block type="lists_getSublist">
+            <value name="LIST">
+              <block type="variables_get">
+                <field name="VAR">list</field>
+              </block>
+            </value>
+          </block>
+          <block type="lists_split">
+            <value name="DELIM">
+              <block type="text">
+                <field name="TEXT">,</field>
+              </block>
+            </value>
+          </block>
+        </category>
+        <category name="Colour">
+          <block type="colour_picker"></block>
+          <block type="colour_random"></block>
+          <block type="colour_rgb">
+            <value name="RED">
+              <block type="math_number">
+                <field name="NUM">100</field>
+              </block>
+            </value>
+            <value name="GREEN">
+              <block type="math_number">
+                <field name="NUM">50</field>
+              </block>
+            </value>
+            <value name="BLUE">
+              <block type="math_number">
+                <field name="NUM">0</field>
+              </block>
+            </value>
+          </block>
+          <block type="colour_blend">
+            <value name="COLOUR1">
+              <block type="colour_picker">
+                <field name="COLOUR">#ff0000</field>
+              </block>
+            </value>
+            <value name="COLOUR2">
+              <block type="colour_picker">
+                <field name="COLOUR">#3333ff</field>
+              </block>
+            </value>
+            <value name="RATIO">
+              <block type="math_number">
+                <field name="NUM">0.5</field>
+              </block>
+            </value>
+          </block>
+        </category>
+        <sep></sep>
+        <category name="Variables" custom="VARIABLE"></category>
+        <category name="Functions" custom="PROCEDURE"></category>
+      </xml>
     </div>
     <div id="config" class="tab-pane fade">
       <h3>Configuration</h3>
@@ -48,7 +505,10 @@
           .then(service => {
             console.log(service);
           })
-          .catch(error => { console.log(error); });
+          .catch(error => { 
+            console.log(error); 
+            swal({   title: "Error!",   text: "Check if bluetooth is active and system is supported!",   type: "error",   confirmButtonText: "Cool" });
+          });
         }
       </script>
       <input type="button" value="Click here to search COISA" onclick="hello()">
@@ -61,6 +521,21 @@
     </div>
   </div>
 </div>
+
+<script>
+  var button = document.getElementById("homeBut");
+  button.onclick = function() {
+    workspace.setVisible(true);
+  }
+  var button2 = document.getElementById("aboutBut");
+  button2.onclick = function() {
+    workspace.setVisible(false);
+  }
+  var button3 = document.getElementById("configBut");
+  button3.onclick = function() {
+    workspace.setVisible(false);
+  }
+</script>
 
 </body>
 </html>
