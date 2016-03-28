@@ -439,10 +439,11 @@
           })
           .then(service => {
             console.log(service);
-            service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
+            return service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
           })
           .then(characteristic => {
             console.log(characteristic)
+            characteristic.writeValue('A');
           })
           .catch(error => { 
             console.log(error); 
