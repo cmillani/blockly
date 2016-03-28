@@ -443,7 +443,8 @@
           })
           .then(characteristic => {
             console.log(characteristic)
-            characteristic.writeValue('A');
+            var buffer = new Uint8Array([1]);
+            characteristic.writeValue(buffer);
           })
           .catch(error => { 
             console.log(error); 
