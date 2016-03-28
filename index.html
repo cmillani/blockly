@@ -439,7 +439,7 @@
           })
           .then(service => {
             console.log(service);
-            service.getCharacteristic(0x2021);
+            service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
           })
           .then(characteristic => {
             console.log(characteristic)
