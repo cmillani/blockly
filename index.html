@@ -12,7 +12,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   
+  <script src="FileSaver.js/FileSaver.min.js"></script>
+  
   <script src="blockly_compressed.js"></script>
+  <script src="coisa_compressed.js"></script>
   <script src="blocks_compressed.js"></script>
   <script src="javascript_compressed.js"></script>
   <script src="msg/js/en.js"></script>
@@ -109,21 +112,23 @@
       
       if (upload)
       {
-        navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
-        .then(device => {
-          console.log(device);
-          return device.connectGATT();
-        })
-        .then(server => {
-          console.log(server);
-          return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb')
-        })
-        .then(service => {
-          console.log(service);
-        })
-        .catch(error => { 
-          console.log(error); 
-          swal({   title: "Error!",   text: "Bluetooth Error :(\n Check Configuration tab!",   type: "error",   confirmButtonText: "Cool" });
+        verifyConnection()
+        .then(function() {
+          var sz = byteArray.length;
+          
+          var buffer = new ArrayBuffer(2);
+          var view = new Uint8Array(buffer);
+          view[0] = sz & 0xFF;
+          view[1] = (sz >> 8) & 0xFF;
+          characteristicCOISA.writeValue(buffer);
+          
+          var end = 0;
+          do {
+            end += 19;
+            var newView = byteArray.slice(end-19, end);
+            console.log(newView);
+            characteristicCOISA.writeValue(newView);
+          } while(end < byteArray.length);
         });
       }
     }
@@ -480,7 +485,7 @@
         });
         return promise;
       }
-      function sendText(){
+      function sendText() {
         verifyConnection()
         .then(function() {
           var input = document.getElementById('textIn');

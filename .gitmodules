@@ -1,3 +1,3 @@
 [submodule "generators/coisa/FileSaver.js"]
-	path = generators/coisa/FileSaver.js
+	path = FileSaver.js
 	url = https://github.com/eligrey/FileSaver.js.git
