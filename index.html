@@ -457,12 +457,6 @@
         .then(characteristic => {
           characteristicCOISA = characteristic;
           console.log(characteristic)
-          var buffer = new ArrayBuffer(4);
-          var view = new Uint8Array(buffer);
-          view[0] = 111;
-          view[1] = 107;
-          view[3] = 10;
-          characteristic.writeValue(buffer);
         })
         .catch(error => { 
           console.log(error); 
