@@ -433,7 +433,7 @@
 
       function connect(){
         console.log("Seek");
-        navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
+        return navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
         .then(device => {
           // deviceCOISA = device;
           console.log(device);
