@@ -123,13 +123,16 @@
           characteristicCOISA.writeValue(buffer);
           
           var end = 0;
-          do {
+          function proximo() {
             end += 19;
             var newView = byteArray.slice(end-19, end);
             console.log(newView);
-            characteristicCOISA.writeValue(newView);
-          } while(end < byteArray.length);
+            var promessa = characteristicCOISA.writeValue(newView)
+            if (end < byteArray.length) promessa.then(proximo);
+          };
+          proximo();
         });
+        
       }
     }
   
