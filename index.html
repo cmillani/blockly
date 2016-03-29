@@ -425,39 +425,72 @@
         Open <b><i>chrome://flags/#enable-web-bluetooth</i></b> to enable web bluetooth <br>
         Only fully works on Android M+ with chrome 49, ChromeOS and Linux with Chrome 50
       </p>
+      <textarea id="textIn" style="width: 100%; height: 12em"></textarea>
       <script>
-        function hello(){
-          console.log("Seek");
-          navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
-          .then(device => {
-            console.log(device);
-            return device.connectGATT();
-          })
-          .then(server => {
-            console.log(server);
-            return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb');
-          })
-          .then(service => {
-            console.log(service);
-            return service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
-          })
-          .then(characteristic => {
-            console.log(characteristic)
-            var buffer = new ArrayBuffer(4);
-            var view = new Uint8Array(buffer);
-            view[0] = 111;
-            view[1] = 107;
-            view[2] = 13;
-            view[3] = 10;
-            characteristic.writeValue(buffer);
-          })
-          .catch(error => { 
-            console.log(error); 
-            swal({   title: "Error!",   text: "Check if bluetooth is active and system is supported!",   type: "error",   confirmButtonText: "Cool" });
-          });
-        }
+      var characteristicCOISA;
+      var serverCOISA;
+      var deviceCOISA;
+      function connect(){
+        console.log("Seek");
+        navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
+        .then(device => {
+          // deviceCOISA = device;
+          console.log(device);
+          device
+          return device.connectGATT();
+        })
+        .then(server => {
+          serverCOISA = server;
+          console.log(server);
+          return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb');
+        })
+        .then(service => {
+          console.log(service);
+          return service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
+        })
+        .then(characteristic => {
+          characteristicCOISA = characteristic;
+          console.log(characteristic)
+          var buffer = new ArrayBuffer(4);
+          var view = new Uint8Array(buffer);
+          view[0] = 111;
+          view[1] = 107;
+          view[2] = 13;
+          view[3] = 10;
+          characteristic.writeValue(buffer);
+        })
+        .catch(error => { 
+          console.log(error); 
+          swal({   title: "Error!",   text: "Check if bluetooth is active and system is supported!",   type: "error",   confirmButtonText: "Cool" });
+        });
+      }
+      function verifyConnection(){
+        var promise = new Promise( function(resolve, reject) {
+          if (!serverCOISA || !serverCOISA.connected) {
+            connect();
+          } else {
+            resolve();
+          }
+        })
+        return promise
+      }
+      function sendText(){
+        verifyConnection()
+        .then(function() {
+          var input = document.getElementById('textIn');
+          var buffer = new ArrayBuffer(input.value.length);
+          var view = new Uint8Array(buffer);
+          for (var i=0, strLen=input.value.length; i < strLen; i++) {
+              view[i] = input.value.charCodeAt(i);
+          }
+          console.log(input.value);
+          console.log(view);
+          characteristicCOISA.writeValue(buffer);
+        });
+      }
       </script>
-      <input type="button" value="Click here to search COISA" onclick="hello()">
+      <input type="button" value="Click here to search COISA" onclick="connect()">
+      <input type="button" value="Click here to send Message to COISA" onclick="sendText()">
     </div>
     <div id="about" class="tab-pane fade">
       <h3>About</h3>
