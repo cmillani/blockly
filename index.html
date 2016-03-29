@@ -467,7 +467,13 @@
       function verifyConnection(){
         var promise = new Promise( function(resolve, reject) {
           if (!serverCOISA || !serverCOISA.connected) {
-            connect();
+            connect()
+            .then(function() {
+              resolve();
+            })
+            .catch(function() {
+              reject();
+            });
           } else {
             resolve();
           }
