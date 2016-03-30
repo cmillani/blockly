@@ -37,6 +37,13 @@
   }
 
   function start() {
+    var lastText = localStorage.getItem("xmlState");
+    if (!lastText){
+      lastText = [
+    	  '<xml xmlns="http://www.w3.org/1999/xhtml">' +
+    	  '	<block type="event_onstart" x="313" y="263"></block>' +
+    	  '</xml>'].join('\n');
+    }
     var toolbox = document.getElementById('toolbox');
     workspace = Blockly.inject('blocklyDiv',
             {comments: true,
@@ -51,7 +58,7 @@
              readOnly: false,
              realtime: false,
              realtimeOptions:
-               {clientId: 'YOUR CLIENT ID GOES HERE',
+               {clientId: 'COISASDK',
                 chatbox: {elementId: 'chatbox'},
                 collabElementId: 'collaborators'},
              rtl: rtl,
@@ -69,26 +76,30 @@
     if (Blockly.Realtime.isEnabled()) {
       enableRealtimeSpecificUi();
     }
-    var xmlInit = [
-  	  '<xml xmlns="http://www.w3.org/1999/xhtml">' +
-  	  '	<block type="event_onstart" x="313" y="263"></block>' +
-  	  '</xml>'].join('\n');
-    var dom = Blockly.Xml.textToDom(xmlInit);
+    var dom = Blockly.Xml.textToDom(lastText);
     Blockly.Xml.domToWorkspace(workspace, dom);
   }
-
-  function toXml() {
-    var output = document.getElementById('importExport');
+  
+  function saveState() {
     var xml = Blockly.Xml.workspaceToDom(workspace);
-    output.value = Blockly.Xml.domToPrettyText(xml);
-    output.focus();
-    output.select();
+    var xmlText = new XMLSerializer().serializeToString(xml);
+
+    localStorage.setItem("xmlState", xmlText);
+  }
+  
+  function toXml() {
+    // var output = document.getElementById('importExport');
+    var xml = Blockly.Xml.workspaceToDom(workspace);
+    console.log(xml);
+    // output.value = Blockly.Xml.domToPrettyText(xml);
+    // output.focus();
+    // output.select();
   }
 
   function fromXml() {
-    var input = document.getElementById('importExport');
-    var xml = Blockly.Xml.textToDom(input.value);
-    Blockly.Xml.domToWorkspace(workspace, xml);
+    // var input = document.getElementById('importExport');
+    // var xml = Blockly.Xml.textToDom(input.value);
+    // Blockly.Xml.domToWorkspace(workspace, xml);
   }
 
   function toCode(lang, download, upload) {
@@ -140,7 +151,7 @@
   }
   </script>
 </head>
-<body onload="start()">
+<body onload="start()" onunload="saveState()">
 
 <div class="container">
   <h2>COISA Unchained</h2>
@@ -160,12 +171,12 @@
       </script>
       <h3>SDK</h3>
       <p>
-        <input type="button" value="Export to XML" onclick="toXml()">
-        &nbsp;
-        <input type="button" value="Import from XML" onclick="fromXml()">
-        &nbsp;
-        &nbsp;
-        &nbsp;
+        <!-- <input type="button" value="Export to XML" onclick="toXml()"> -->
+        <!-- &nbsp; -->
+        <!-- <input type="button" value="Import from XML" onclick="fromXml()"> -->
+        <!-- &nbsp; -->
+        <!-- &nbsp; -->
+        <!-- &nbsp; -->
         <!-- <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')"> -->
         <!-- &nbsp; -->
         <input type="button" value="Download Coisa binary (WIP)" onclick="toCode('Coisa', true)">
