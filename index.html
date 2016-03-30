@@ -140,6 +140,9 @@
             console.log(newView);
             var promessa = characteristicCOISA.writeValue(newView)
             if (end < byteArray.length) promessa.then(proximo);
+            promessa.catch(function(error) {
+              swal({   title: "Error!",   text: "Something went wrong! :(\nPlease restart COISA",   type: "error",   confirmButtonText: "Cool" });
+            })
           };
           proximo();
         });
