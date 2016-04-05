@@ -500,7 +500,7 @@
         .then(characteristic => {
           characteristicCOISA = characteristic;
           console.log(characteristic);
-          return new Promisse(function(resolve, reject) {resolve();});
+          return new Promise(function(resolve, reject) {resolve();});
         })
         .catch(error => { 
           console.log(error); 
