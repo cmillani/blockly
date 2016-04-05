@@ -82,7 +82,7 @@
   
   function saveState() {
     var xml = Blockly.Xml.workspaceToDom(workspace);
-    var xmlText = new XMLSerializer().serializeToString(xml);
+    var xmlText = Blockly.Xml.domToPrettyText(xml);
 
     localStorage.setItem("xmlState", xmlText);
   }
@@ -125,12 +125,25 @@
       {
         verifyConnection()
         .then(function() {
+          return new Promise( function(resolve, reject) {
+            var buffer = new ArrayBuffer(input.value.length);
+            var view = new Uint8Array(buffer);
+            characteristicCOISA.writeValue(view);
+          });
+        })
+        .then(function() {
+          return characteristicCOISA.readValue()
+        })
+        .then(function(value) {
+          console.log(value);
           var sz = byteArray.length;
           
           var buffer = new ArrayBuffer(2);
           var view = new Uint8Array(buffer);
           view[0] = sz & 0xFF;
           view[1] = (sz >> 8) & 0xFF;
+          var newView = byteArray.slice(end-19, end);
+          console.log(newView);
           characteristicCOISA.writeValue(buffer);
           
           var end = 0;
@@ -140,10 +153,20 @@
             console.log(newView);
             var promessa = characteristicCOISA.writeValue(newView)
             if (end < byteArray.length) promessa.then(proximo);
+            // else promessa.then(keepReading());
             promessa.catch(function(error) {
               swal({   title: "Error!",   text: "Something went wrong! :(\nPlease restart COISA",   type: "error",   confirmButtonText: "Cool" });
             })
           };
+          function keepReading(value) {
+            // console.log('R');
+            var area = document.getElementById('output');
+            output.value += String.fromCharCode.apply(null, new Uint8Array(value));;
+            
+            characteristicCOISA.readValue()
+            .then(keepReading)
+            .catch(keepReading);
+          }
           proximo();
         });
         
@@ -188,7 +211,8 @@
         &nbsp;
         <input type="button" value="Upload Coisa binary (WIP)" onclick="toCode('Coisa', false, true)">
       </p>
-      <div id="blocklyDiv" style="height: 400px; width: 100%;"></div>
+      <textarea readonly disabled id="output" style="width: 20%; max-width: 20%; height: 400px; max-height: 400px"></textarea>
+      <div id="blocklyDiv" style="height: 400px; width: 80%; float: right;"></div>
       <xml id="toolbox" style="display: none">
         <category name="Logic">
           <block type="controls_if"></block>
