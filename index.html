@@ -126,8 +126,10 @@
         verifyConnection()
         .then(function() {
           return new Promise( function(resolve, reject) {
-            var buffer = new ArrayBuffer(input.value.length);
+            var buffer = new ArrayBuffer(2);
             var view = new Uint8Array(buffer);
+            view[0] = 72;
+            view[1] = 73;
             characteristicCOISA.writeValue(view);
           });
         })
@@ -155,6 +157,7 @@
             if (end < byteArray.length) promessa.then(proximo);
             // else promessa.then(keepReading());
             promessa.catch(function(error) {
+              console.log(error);
               swal({   title: "Error!",   text: "Something went wrong! :(\nPlease restart COISA",   type: "error",   confirmButtonText: "Cool" });
             })
           };
