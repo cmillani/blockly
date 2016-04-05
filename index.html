@@ -125,15 +125,14 @@
       {
         verifyConnection()
         .then(function() {
-          return new Promise( function(resolve, reject) {
-            var buffer = new ArrayBuffer(2);
-            var view = new Uint8Array(buffer);
-            view[0] = 72;
-            view[1] = 73;
-            characteristicCOISA.writeValue(view);
-          });
+          var buffer = new ArrayBuffer(2);
+          var view = new Uint8Array(buffer);
+          view[0] = 72;
+          view[1] = 73;
+          return characteristicCOISA.writeValue(view);
         })
         .then(function() {
+          console.log('Wrote');
           return characteristicCOISA.readValue()
         })
         .then(function(value) {
@@ -500,7 +499,8 @@
         })
         .then(characteristic => {
           characteristicCOISA = characteristic;
-          console.log(characteristic)
+          console.log(characteristic);
+          return new Promisse(function(resolve, reject) {resolve();});
         })
         .catch(error => { 
           console.log(error); 
