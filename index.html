@@ -1,42 +1,358 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <title>COISA Unchained</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
-  if (window.location.protocol != "https:" && window.location.protocol != "file:")
-      window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
-  </script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  
-  <script src="FileSaver.js/FileSaver.min.js"></script>
+  <title>COISA Unchained</title>
   
   <script src="blockly_compressed.js"></script>
   <script src="coisa_compressed.js"></script>
   <script src="blocks_compressed.js"></script>
   <script src="javascript_compressed.js"></script>
   <script src="msg/js/en.js"></script>
-  <!-- Load the Google Drive SDK Realtime libraries. -->
-  <script src="https://apis.google.com/js/api.js"></script>
+  
+  <script src="FileSaver.js/FileSaver.min.js"></script>
+  <script>
+  if (window.location.protocol != "https:" && window.location.protocol != "file:")
+      window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+  </script>
   
   <script src="sweetalert/dist/sweetalert.min.js"></script> 
   <link rel="stylesheet" type="text/css" href="sweetalert/dist/sweetalert.css">
   
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #blocklyArea {
+      height: 99%;
+    }
+  </style>
+</head>
+<body onunload="saveState()">
   <script>
-  'use strict';
-  // Depending on the URL argument, render as LTR or RTL.
-  var rtl = (document.location.search == '?rtl');
-  var workspace = null;
+    var ChromeSamples = {
+      log: function() {
+        var line = Array.prototype.slice.call(arguments).map(function(argument) {
+          return typeof argument === 'string' ? argument : JSON.stringify(argument);
+        }).join(' ');
 
-  function enableRealtimeSpecificUi() {
-    var realtimeDiv = document.getElementById('realtime');
-    realtimeDiv.display = 'block';
-  }
+        document.querySelector('#log').textContent += line + '\n';
+      },
 
-  function start() {
+      clearLog: function() {
+        document.querySelector('#log').textContent = '';
+      },
+
+      setStatus: function(status) {
+        document.querySelector('#status').textContent = status;
+      },
+
+      setContent: function(newContent) {
+        var content = document.querySelector('#content');
+        while(content.hasChildNodes()) {
+          content.removeChild(content.lastChild);
+        }
+        content.appendChild(newContent);
+      }
+    };
+  </script>
+  <table>
+    <tr>
+      <td>
+        <h1>COISA Unchained: This is a debugging interface. Soon, a client side web SDK for COISA will be available here :)</h1>
+        <p>
+          <b><i>chrome://flags/#enable-web-bluetooth</i></b>
+        </p>
+        <input type="button" value="Upload Coisa binary (WIP)" onclick="toCode('Coisa', false, true)">
+        <input type="button" value="Connect" onclick="onStartButtonClick()">
+        <input type="button" value="Clear Log" onclick="ChromeSamples.clearLog()">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="output" class="output">
+          <div id="content"></div>
+          <div id="status"></div>
+          <pre id="log">Live Output Goes Here:
+          </pre>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td id="blocklyArea">
+      </td>
+    </tr>
+  </table>
+
+  <div id="blocklyDiv" style="position: absolute"></div>
+
+  <xml id="toolbox" style="display: none">
+    <category name="Logic">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category name="Events">
+	  <block type="event_onstart"></block>
+	  <block type="event_btdown"></block>
+      <block type="event_distancechange">
+        <value name="threshold">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category name="Lights">
+	  <block type="led_red"></block>
+	  <block type="led_green"></block>
+    </category>
+    <category name="Movement">
+	  <block type="setup_movement"></block>
+      <block type="movement_robot"></block>
+	  <block type="go_forward"></block>
+	  <block type="go_left"></block>
+	  <block type="go_right"></block>
+	  <block type="stop"></block>
+    </category>
+    <category name="Serial">
+	  <block type="serial_printnum">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+	  </block>
+      <block type="serial_print">
+        <value name="TEXT">
+          <block type="text">
+            <field name="TEXT">Hello World</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_change">
+        <value name="DELTA">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+    </category>
+    <category name="Text">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+      <block type="text_length"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase"></block>
+      <block type="text_trim"></block>
+      <block type="text_print"></block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+    </category>
+    <category name="Lists">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <block type="text">
+            <field name="TEXT">,</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category name="Colour">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb">
+        <value name="RED">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+        <value name="GREEN">
+          <block type="math_number">
+            <field name="NUM">50</field>
+          </block>
+        </value>
+        <value name="BLUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+      </block>
+      <block type="colour_blend">
+        <value name="COLOUR1">
+          <block type="colour_picker">
+            <field name="COLOUR">#ff0000</field>
+          </block>
+        </value>
+        <value name="COLOUR2">
+          <block type="colour_picker">
+            <field name="COLOUR">#3333ff</field>
+          </block>
+        </value>
+        <value name="RATIO">
+          <block type="math_number">
+            <field name="NUM">0.5</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <sep></sep>
+    <category name="Variables" custom="VARIABLE"></category>
+    <category name="Functions" custom="PROCEDURE"></category>
+  </xml>
+
+  <script>
     var lastText = localStorage.getItem("xmlState");
     if (!lastText){
       lastText = [
@@ -44,532 +360,119 @@
     	  '	<block type="event_onstart" x="313" y="263"></block>' +
     	  '</xml>'].join('\n');
     }
-    var toolbox = document.getElementById('toolbox');
-    workspace = Blockly.inject('blocklyDiv',
-            {comments: true,
-             disable: true,
-             collapse: true,
-             grid:
-               {spacing: 25,
-                length: 3,
-                colour: '#ccc',
-                snap: true},
-             media: 'media/',
-             readOnly: false,
-             realtime: false,
-             realtimeOptions:
-               {clientId: 'COISASDK',
-                chatbox: {elementId: 'chatbox'},
-                collabElementId: 'collaborators'},
-             rtl: rtl,
-             scrollbars: true,
-             toolbox: toolbox,
-             zoom:
-               {enabled: true,
-                controls: true,
-                wheel: true,
-                maxScale: 2,
-                minScale: .1,
-                scaleSpeed: 1.1
-               },
-            });
-    if (Blockly.Realtime.isEnabled()) {
-      enableRealtimeSpecificUi();
-    }
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var workspace = Blockly.inject(blocklyDiv,
+        {media: 'media/',
+         toolbox: document.getElementById('toolbox')});
     var dom = Blockly.Xml.textToDom(lastText);
     Blockly.Xml.domToWorkspace(workspace, dom);
-  }
-  
-  function saveState() {
-    var xml = Blockly.Xml.workspaceToDom(workspace);
-    var xmlText = Blockly.Xml.domToPrettyText(xml);
+    var onresize = function(e) {
+      // Compute the absolute coordinates and dimensions of blocklyArea.
+      var element = blocklyArea;
+      var x = 0;
+      var y = 0;
+      do {
+        x += element.offsetLeft;
+        y += element.offsetTop;
+        element = element.offsetParent;
+      } while (element);
+      // Position blocklyDiv over blocklyArea.
+      blocklyDiv.style.left = x + 'px';
+      blocklyDiv.style.top = y + 'px';
+      blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+    };
+    function saveState() {
+      var xml = Blockly.Xml.workspaceToDom(workspace);
+      var xmlText = Blockly.Xml.domToPrettyText(xml);
 
-    localStorage.setItem("xmlState", xmlText);
-  }
-  
-  function toXml() {
-    // var output = document.getElementById('importExport');
-    var xml = Blockly.Xml.workspaceToDom(workspace);
-    console.log(xml);
-    // output.value = Blockly.Xml.domToPrettyText(xml);
-    // output.focus();
-    // output.select();
-  }
-
-  function fromXml() {
-    // var input = document.getElementById('importExport');
-    // var xml = Blockly.Xml.textToDom(input.value);
-    // Blockly.Xml.domToWorkspace(workspace, xml);
-  }
-
-  function toCode(lang, download, upload) {
-    var text = Blockly[lang].workspaceToCode(workspace);
-    // console.log(text);
-    if (lang == 'Coisa')
-    {
-      var binary = Blockly.Coisa.Assembler.assembly(text);
-      // console.log(binary);
-    	var byteArray = new Uint8Array(binary);
-    	for (var x = 0; x < byteArray.length; x++){
-    	    byteArray[x] = binary[x];
-    		// console.log(byteArray[x])
-    	}
-        // var blob = new Blob(binary);//Application/binary // application/octet-stream
-    	if (download)
-    	{
-    		var blob = new Blob([byteArray], {type: "application/octet-stream"});
-    	    saveAs(blob, "data.x");
-    	}
-      
-      if (upload)
+      localStorage.setItem("xmlState", xmlText);
+    }
+    log = ChromeSamples.log;
+    function toCode(lang, download, upload) {
+      var text = Blockly[lang].workspaceToCode(workspace);
+      // console.log(text);
+      if (lang == 'Coisa')
       {
-        verifyConnection()
-        .then(function() {
-          var buffer = new ArrayBuffer(2);
-          var view = new Uint8Array(buffer);
-          view[0] = 72;
-          view[1] = 73;
-          return characteristicCOISA.writeValue(view);
-        })
-        .then(function() {
-          console.log('Wrote');
-          return characteristicCOISA.readValue()
-        })
-        .then(function(value) {
-          console.log(value);
-          var sz = byteArray.length;
-          
-          var buffer = new ArrayBuffer(2);
-          var view = new Uint8Array(buffer);
-          view[0] = sz & 0xFF;
-          view[1] = (sz >> 8) & 0xFF;
-          var newView = byteArray.slice(end-19, end);
-          console.log(newView);
-          characteristicCOISA.writeValue(buffer);
-          
-          var end = 0;
-          function proximo() {
-            end += 19;
-            var newView = byteArray.slice(end-19, end);
-            console.log(newView);
-            var promessa = characteristicCOISA.writeValue(newView)
-            if (end < byteArray.length) promessa.then(proximo);
-            // else promessa.then(keepReading());
-            promessa.catch(function(error) {
-              console.log(error);
-              swal({   title: "Error!",   text: "Something went wrong! :(\nPlease restart COISA",   type: "error",   confirmButtonText: "Cool" });
-            })
-          };
-          function keepReading(value) {
-            // console.log('R');
-            var area = document.getElementById('output');
-            output.value += String.fromCharCode.apply(null, new Uint8Array(value));;
-            console.log(value);
-            characteristicCOISA.readValue()
-            .then(keepReading)
-            .catch(keepReading);
+        var binary = Blockly.Coisa.Assembler.assembly(text);
+        // console.log(binary);
+      	var byteArray = new Uint8Array(binary);
+      	for (var x = 0; x < byteArray.length; x++){
+      	    byteArray[x] = binary[x];
+      		// console.log(byteArray[x])
+      	}
+          // var blob = new Blob(binary);//Application/binary // application/octet-stream
+      	if (download)
+      	{
+      		var blob = new Blob([byteArray], {type: "application/octet-stream"});
+      	    saveAs(blob, "data.x");
+      	}
+      
+        if (upload)
+        {
+          if (!myCharacteristic) {
+            log('Argh! ' + 'No connection active!!');
+            return;
           }
-          proximo();
-        });
-        
+        }
       }
     }
-  
-  
-  }
+    
+    var myCharacteristic;
+
+    function onStartButtonClick() {
+      let serviceUuid = '0x2020';
+      if (serviceUuid.startsWith('0x')) {
+        serviceUuid = parseInt(serviceUuid, 16);
+      }
+
+      let characteristicUuid = '0x2021';
+      if (characteristicUuid.startsWith('0x')) {
+        characteristicUuid = parseInt(characteristicUuid, 16);
+      }
+
+      log('Requesting Bluetooth Device...');
+      navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
+      .then(device => device.gatt.connect())
+      .then(server => server.getPrimaryService(serviceUuid))
+      .then(service => service.getCharacteristic(characteristicUuid))
+      .then(characteristic => {
+        myCharacteristic = characteristic;
+        return myCharacteristic.startNotifications().then(_ => {
+          log('> Notifications started');
+          myCharacteristic.addEventListener('characteristicvaluechanged',
+            handleNotifications);
+        });
+      })
+      .catch(error => {
+        log('Argh! ' + error);
+      });
+    }
+
+    function onStopButtonClick() {
+      if (myCharacteristic) {
+        myCharacteristic.stopNotifications().then(_ => {
+          log('> Notifications stopped');
+          myCharacteristic.removeEventListener('characteristicvaluechanged',
+            handleNotifications);
+        });
+      }
+    }
+
+    function handleNotifications(event) {
+      let value = event.target.value;
+      let a = [];
+      // Convert raw data bytes to hex values just for the sake of showing something.
+      // In the "real" world, you'd use data.getUint8, data.getUint16 or even
+      // TextDecoder to process raw data bytes.
+      for (var i = 0; i < value.byteLength; i++) {
+        a.push(String.fromCharCode(value.getUint8(i)));
+      }
+      log('> ' + a.join(' '));
+    }
+    window.addEventListener('resize', onresize, false);
+    onresize();
   </script>
-</head>
-<body onload="start()" onunload="saveState()">
-
-<div class="container">
-  <h2>COISA Unchained</h2>
-  <ul class="nav nav-pills">
-<!--  "javascript:void(workspace.setVisible(true))" -->
-
-    <li class="active" id="homeBut"><a data-toggle="pill" href="#home">SDK</a></li>
-    <li id="configBut"><a data-toggle="pill" href="#config">Configuration</a></li>
-    <li id="aboutBut"><a data-toggle="pill" href="#about">About</a></li>
-  </ul>
-  
-  <div class="tab-content">
-    <div id="home" class="tab-pane fade in active">
-      <script>
-      // start();
-      // concole.log("Olar");
-      </script>
-      <h3>SDK</h3>
-      <p>
-        <!-- <input type="button" value="Export to XML" onclick="toXml()"> -->
-        <!-- &nbsp; -->
-        <!-- <input type="button" value="Import from XML" onclick="fromXml()"> -->
-        <!-- &nbsp; -->
-        <!-- &nbsp; -->
-        <!-- &nbsp; -->
-        <!-- <input type="button" value="To Coisa (WIP)" onclick="toCode('Coisa')"> -->
-        <!-- &nbsp; -->
-        <input type="button" value="Download Coisa binary (WIP)" onclick="toCode('Coisa', true)">
-        &nbsp;
-        &nbsp;
-        &nbsp;
-        <input type="button" value="Upload Coisa binary (WIP)" onclick="toCode('Coisa', false, true)">
-      </p>
-      <textarea readonly disabled id="output" style="width: 20%; max-width: 20%; height: 400px; max-height: 400px"></textarea>
-      <div id="blocklyDiv" style="height: 400px; width: 80%; float: right;"></div>
-      <xml id="toolbox" style="display: none">
-        <category name="Logic">
-          <block type="controls_if"></block>
-          <block type="logic_compare"></block>
-          <block type="logic_operation"></block>
-          <block type="logic_negate"></block>
-          <block type="logic_boolean"></block>
-          <block type="logic_null"></block>
-          <block type="logic_ternary"></block>
-        </category>
-        <category name="Events">
-    	  <block type="event_onstart"></block>
-    	  <block type="event_btdown"></block>
-          <block type="event_distancechange">
-            <value name="threshold">
-              <block type="math_number">
-                <field name="NUM">10</field>
-              </block>
-            </value>
-          </block>
-        </category>
-        <category name="Lights">
-    	  <block type="led_red"></block>
-    	  <block type="led_green"></block>
-        </category>
-        <category name="Movement">
-    	  <block type="setup_movement"></block>
-          <block type="movement_robot"></block>
-    	  <block type="go_forward"></block>
-    	  <block type="go_left"></block>
-    	  <block type="go_right"></block>
-    	  <block type="stop"></block>
-        </category>
-        <category name="Serial">
-    	  <block type="serial_printnum">
-            <value name="NUM">
-              <block type="math_number">
-                <field name="NUM">0</field>
-              </block>
-            </value>
-    	  </block>
-          <block type="serial_print">
-            <value name="TEXT">
-              <block type="text">
-                <field name="TEXT">Hello World</field>
-              </block>
-            </value>
-          </block>
-        </category>
-        <category name="Loops">
-          <block type="controls_repeat_ext">
-            <value name="TIMES">
-              <block type="math_number">
-                <field name="NUM">10</field>
-              </block>
-            </value>
-          </block>
-          <block type="controls_whileUntil"></block>
-          <block type="controls_for">
-            <value name="FROM">
-              <block type="math_number">
-                <field name="NUM">1</field>
-              </block>
-            </value>
-            <value name="TO">
-              <block type="math_number">
-                <field name="NUM">10</field>
-              </block>
-            </value>
-            <value name="BY">
-              <block type="math_number">
-                <field name="NUM">1</field>
-              </block>
-            </value>
-          </block>
-          <block type="controls_forEach"></block>
-          <block type="controls_flow_statements"></block>
-        </category>
-        <category name="Math">
-          <block type="math_number"></block>
-          <block type="math_arithmetic"></block>
-          <block type="math_single"></block>
-          <block type="math_trig"></block>
-          <block type="math_constant"></block>
-          <block type="math_number_property"></block>
-          <block type="math_change">
-            <value name="DELTA">
-              <block type="math_number">
-                <field name="NUM">1</field>
-              </block>
-            </value>
-          </block>
-          <block type="math_round"></block>
-          <block type="math_on_list"></block>
-          <block type="math_modulo"></block>
-          <block type="math_constrain">
-            <value name="LOW">
-              <block type="math_number">
-                <field name="NUM">1</field>
-              </block>
-            </value>
-            <value name="HIGH">
-              <block type="math_number">
-                <field name="NUM">100</field>
-              </block>
-            </value>
-          </block>
-          <block type="math_random_int">
-            <value name="FROM">
-              <block type="math_number">
-                <field name="NUM">1</field>
-              </block>
-            </value>
-            <value name="TO">
-              <block type="math_number">
-                <field name="NUM">100</field>
-              </block>
-            </value>
-          </block>
-          <block type="math_random_float"></block>
-        </category>
-        <category name="Text">
-          <block type="text"></block>
-          <block type="text_join"></block>
-          <block type="text_append">
-            <value name="TEXT">
-              <block type="text"></block>
-            </value>
-          </block>
-          <block type="text_length"></block>
-          <block type="text_isEmpty"></block>
-          <block type="text_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_charAt">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_getSubstring">
-            <value name="STRING">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_changeCase"></block>
-          <block type="text_trim"></block>
-          <block type="text_print"></block>
-          <block type="text_prompt_ext">
-            <value name="TEXT">
-              <block type="text"></block>
-            </value>
-          </block>
-        </category>
-        <category name="Lists">
-          <block type="lists_create_empty"></block>
-          <block type="lists_create_with"></block>
-          <block type="lists_repeat">
-            <value name="NUM">
-              <block type="math_number">
-                <field name="NUM">5</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_length"></block>
-          <block type="lists_isEmpty"></block>
-          <block type="lists_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getIndex">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_setIndex">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getSublist">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_split">
-            <value name="DELIM">
-              <block type="text">
-                <field name="TEXT">,</field>
-              </block>
-            </value>
-          </block>
-        </category>
-        <category name="Colour">
-          <block type="colour_picker"></block>
-          <block type="colour_random"></block>
-          <block type="colour_rgb">
-            <value name="RED">
-              <block type="math_number">
-                <field name="NUM">100</field>
-              </block>
-            </value>
-            <value name="GREEN">
-              <block type="math_number">
-                <field name="NUM">50</field>
-              </block>
-            </value>
-            <value name="BLUE">
-              <block type="math_number">
-                <field name="NUM">0</field>
-              </block>
-            </value>
-          </block>
-          <block type="colour_blend">
-            <value name="COLOUR1">
-              <block type="colour_picker">
-                <field name="COLOUR">#ff0000</field>
-              </block>
-            </value>
-            <value name="COLOUR2">
-              <block type="colour_picker">
-                <field name="COLOUR">#3333ff</field>
-              </block>
-            </value>
-            <value name="RATIO">
-              <block type="math_number">
-                <field name="NUM">0.5</field>
-              </block>
-            </value>
-          </block>
-        </category>
-        <sep></sep>
-        <category name="Variables" custom="VARIABLE"></category>
-        <category name="Functions" custom="PROCEDURE"></category>
-      </xml>
-    </div>
-    <div id="config" class="tab-pane fade">
-      <h3>Configuration</h3>
-      <p>
-        Open <b><i>chrome://flags/#enable-web-bluetooth</i></b> to enable web bluetooth <br>
-        Only fully works on Android M+ with chrome 49, ChromeOS and Linux with Chrome 50
-      </p>
-      <textarea id="textIn" style="width: 100%; height: 12em"></textarea>
-      <script>
-      var characteristicCOISA;
-      var serverCOISA;
-      // var deviceCOISA;
-
-      function connect(){
-        console.log("Seek");
-        return navigator.bluetooth.requestDevice({ filters: [{ services: ['00002020-0000-1000-8000-00805f9b34fb'] }] })
-        .then(device => {
-          // deviceCOISA = device;
-          console.log(device);
-          device
-          return device.connectGATT();
-        })
-        .then(server => {
-          serverCOISA = server;
-          console.log(server);
-          return server.getPrimaryService('00002020-0000-1000-8000-00805f9b34fb');
-        })
-        .then(service => {
-          console.log(service);
-          return service.getCharacteristic('00002021-0000-1000-8000-00805f9b34fb');
-        })
-        .then(characteristic => {
-          characteristicCOISA = characteristic;
-          console.log(characteristic);
-          return new Promise(function(resolve, reject) {resolve();});
-        })
-        .catch(error => { 
-          console.log(error); 
-          swal({   title: "Error!",   text: "Check if bluetooth is active and system is supported!",   type: "error",   confirmButtonText: "Cool" });
-        });
-      }
-      function verifyConnection(){
-        var promise = new Promise( function(resolve, reject) {
-          if (!serverCOISA || !serverCOISA.connected) {
-            connect()
-            .then(function() {
-              resolve();
-            })
-            .catch(function() {
-              reject();
-            });
-          } else {
-            resolve();
-          }
-        });
-        return promise;
-      }
-      function sendText() {
-        verifyConnection()
-        .then(function() {
-          var input = document.getElementById('textIn');
-          var buffer = new ArrayBuffer(input.value.length);
-          var view = new Uint8Array(buffer);
-          for (var i=0, strLen=input.value.length; i < strLen; i++) {
-              view[i] = input.value.charCodeAt(i);
-          }
-          // console.log(input.value);
-          console.log(view);
-          var end = 0;
-          do {
-            end += 19;
-            var newView = view.slice(end-19, end);
-            console.log(newView);
-            characteristicCOISA.writeValue(newView);
-          } while(end < input.value.length);
-        });
-      }
-      </script>
-      <input type="button" value="Click here to search COISA" onclick="connect()">
-      <input type="button" value="Click here to send Message to COISA" onclick="sendText()">
-    </div>
-    <div id="about" class="tab-pane fade">
-      <h3>About</h3>
-      <p>
-        This is a debugging interface. Soon, a client side web SDK for COISA will be available here :)
-      </p>
-    </div>
-  </div>
-</div>
-
-<script>
-  var button = document.getElementById("homeBut");
-  button.onclick = function() {
-    workspace.setVisible(true);
-  }
-  var button2 = document.getElementById("aboutBut");
-  button2.onclick = function() {
-    workspace.setVisible(false);
-  }
-  var button3 = document.getElementById("configBut");
-  button3.onclick = function() {
-    workspace.setVisible(false);
-  }
-</script>
-
 </body>
 </html>
