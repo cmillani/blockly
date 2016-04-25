@@ -457,13 +457,13 @@
       var newView = byteArray.slice(end-19, end);
       // console.log(newView);
       if (end < byteArray.length) {
-        characteristicCOISA.writeValue(newView)
+        myCharacteristic.writeValue(newView)
         .then(sendBinary())
         .catch(error => {
           log('Argh! ' + error);
         });
       } else {
-        characteristicCOISA.writeValue(newView)
+        myCharacteristic.writeValue(newView)
         .catch(error => {
           log('Argh! ' + error);
         });
