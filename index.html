@@ -443,19 +443,30 @@
           var view = new Uint8Array(buffer);
           view[0] = sz & 0xFF;
           view[1] = (sz >> 8) & 0xFF;
-          myCharacteristic.writeValue(buffer).then(sendBinary(byteArray));
+          myCharacteristic.writeValue(buffer)
+          .then(sendBinary())
+          .catch(error => {
+            log('Argh! ' + error);
+          });
         }
       }
     }
     var end = 0;
-    var sendBinary = function(byteArray) {
+    var sendBinary = function() {
       end += 19;
       var newView = byteArray.slice(end-19, end);
       // console.log(newView);
       if (end < byteArray.length) {
-        characteristicCOISA.writeValue(newView).then(sendBinary(byteArray));
+        characteristicCOISA.writeValue(newView)
+        .then(sendBinary())
+        .catch(error => {
+          log('Argh! ' + error);
+        });
       } else {
-        characteristicCOISA.writeValue(newView);
+        characteristicCOISA.writeValue(newView)
+        .catch(error => {
+          log('Argh! ' + error);
+        });
       }
     };
     
