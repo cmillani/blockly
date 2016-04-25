@@ -433,13 +433,31 @@
       
         if (upload)
         {
+          var sz = byteArray.length;
           if (!myCharacteristic) {
             log('Argh! ' + 'No connection active!!');
             return;
           }
+          var buffer = new ArrayBuffer(2);
+          end = 0;
+          var view = new Uint8Array(buffer);
+          view[0] = sz & 0xFF;
+          view[1] = (sz >> 8) & 0xFF;
+          myCharacteristic.writeValue(buffer).then(sendBinary(byteArray));
         }
       }
     }
+    var end = 0;
+    var sendBinary = function(byteArray) {
+      end += 19;
+      var newView = byteArray.slice(end-19, end);
+      // console.log(newView);
+      if (end < byteArray.length) {
+        characteristicCOISA.writeValue(newView).then(sendBinary(byteArray));
+      } else {
+        characteristicCOISA.writeValue(newView);
+      }
+    };
     
     var myCharacteristic;
 
