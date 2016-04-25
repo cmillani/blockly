@@ -40,6 +40,28 @@
     #blocklyArea {
       height: 99%;
     }
+    .output {
+      background-color: #f0f0f0;
+      border-radius: 0.75em;
+      display: block;
+      margin: 0.5em;
+      padding: 0.5em;
+      height: 200px;
+    }
+
+    #status {
+      margin-top: 1em;
+      font-style: italic;
+    }
+
+    #log {
+      margin-top: 1em;
+      white-space: pre-wrap;
+    }
+
+    #status:empty, #log:empty, #content:empty {
+      display: none;
+    }
   </style>
 </head>
 <body onunload="saveState()">
@@ -87,7 +109,7 @@
         <div id="output" class="output">
           <div id="content"></div>
           <div id="status"></div>
-          <pre id="log">Live Output Goes Here:
+          <pre id="log">Live Output:
           </pre>
         </div>
       </td>
@@ -469,7 +491,7 @@
       for (var i = 0; i < value.byteLength; i++) {
         a.push(String.fromCharCode(value.getUint8(i)));
       }
-      log('> ' + a.join(' '));
+      log(a.join(''));
     }
     window.addEventListener('resize', onresize, false);
     onresize();
