@@ -9,7 +9,7 @@ function state() {
 	  end = 0;
 	  bufferOut = buffer;
 	  expected = expectation;
-	  sendNext(4);
+	  sendNext(2); //Command has 2 chars
 	};
 	
 	var sendNext = function(sz) {
@@ -19,7 +19,6 @@ function state() {
       view[i] = bufferOut[end + i];
     }
     end += sz;
-    console.log("AWUQIEU");
     console.log(view);
     myCharacteristic.writeValue(buffer)
     .catch(error => {
@@ -29,8 +28,11 @@ function state() {
 	
 	this.verify = function(received) {
 	  if (received == expected) {
-	    if (expected == "RD-OK") expected = "k";
-	    sendNext(1);
+	    if (expected == "RD-OK") { 
+	      expected = "k";
+	      sendNext(2); //Sends size
+	    }
+	    else sendNext(1); //Keeps sending code
 	    return true;
 	  }
 	  else return false;
