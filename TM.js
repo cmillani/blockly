@@ -31,11 +31,19 @@ function state() {
 	    if (expected == "RD-OK") { 
 	      expected = "k";
 	      sendNext(2); //Sends size
+				return true;
 	    }
+			else if (expected == "k" & (end) == bufferOut.length) { //End of buffer
+				expected = "";
+				return true;
+			}
 	    else sendNext(1); //Keeps sending code
 	    return true;
 	  }
-	  else return false;
+	  else {
+			console.log("Error, did not meet expected response from COISA");
+			return false;
+		}
 	};
 }
 
