@@ -53,8 +53,8 @@ var sendX = function(binary) {
   view[1] = 68;
   view[2] = binary.length & 0xFF;
   view[3] = (binary.length >> 8) & 0xFF;
-  for (var i in binary) {
-    view[i+4] = binary[i];
+  for (var x = 0; x < binary.length; x++) {
+    view[x+4] = binary[x];
   }
   console.log(view);
   TM.start(view, "RD-OK");
