@@ -10,16 +10,16 @@
   <script src="javascript_compressed.js"></script>
   <script src="msg/js/en.js"></script>
   <script src="TM.js"></script>
-  
-  <script src="FileSaver.js/FileSaver.min.js"></script>
+
+<!--  <script src="FileSaver.js/FileSaver.min.js"></script> -->
   <script>
   if (window.location.protocol != "https:" && window.location.protocol != "file:")
       window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
   </script>
-  
-  <script src="sweetalert/dist/sweetalert.min.js"></script> 
+
+<!--  <script src="sweetalert/dist/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="sweetalert/dist/sweetalert.css">
-  
+   -->
   <style>
     html, body {
       height: 100%;
@@ -66,33 +66,6 @@
   </style>
 </head>
 <body onunload="saveState()">
-  <script>
-    var ChromeSamples = {
-      log: function() {
-        var line = Array.prototype.slice.call(arguments).map(function(argument) {
-          return typeof argument === 'string' ? argument : JSON.stringify(argument);
-        }).join(' ');
-
-        document.querySelector('#log').textContent += line + '\n';
-      },
-
-      clearLog: function() {
-        document.querySelector('#log').textContent = '';
-      },
-
-      setStatus: function(status) {
-        document.querySelector('#status').textContent = status;
-      },
-
-      setContent: function(newContent) {
-        var content = document.querySelector('#content');
-        while(content.hasChildNodes()) {
-          content.removeChild(content.lastChild);
-        }
-        content.appendChild(newContent);
-      }
-    };
-  </script>
   <table>
     <tr>
       <td>
@@ -102,17 +75,6 @@
         </p>
         <input type="button" value="Upload Coisa binary (WIP)" onclick="toCode('Coisa', false, true)">
         <input type="button" value="Connect" onclick="onStartButtonClick()">
-        <input type="button" value="Clear Log" onclick="ChromeSamples.clearLog()">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <div id="output" class="output">
-          <div id="content"></div>
-          <div id="status"></div>
-          <pre id="log">Live Output:
-          </pre>
-        </div>
       </td>
     </tr>
     <tr>
@@ -412,7 +374,6 @@
 
       localStorage.setItem("xmlState", xmlText);
     }
-    log = ChromeSamples.log;
     function toCode(lang, download, upload) {
       var text = Blockly[lang].workspaceToCode(workspace);
       // console.log(text);
@@ -426,11 +387,11 @@
       		// console.log(byteArray[x])
       	}
           // var blob = new Blob(binary);//Application/binary // application/octet-stream
-      	if (download)
-      	{
-      		var blob = new Blob([byteArray], {type: "application/octet-stream"});
-      	    saveAs(blob, "data.x");
-      	}
+        // if (download)
+        // {
+        //   var blob = new Blob([byteArray], {type: "application/octet-stream"});
+        //     saveAs(blob, "data.x");
+        // }
       
         if (upload)
         { 
