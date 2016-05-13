@@ -22,26 +22,28 @@ function state() {
     console.log(view);
     myCharacteristic.writeValue(buffer)
     .catch(error => {
-      console.log('Argh! ' + error);
+			alertCOISA("Write Error", error);
     });
 	};
 	
 	this.verify = function(received) {
 	  if (received == expected) {
 	    if (expected == "RD-OK") { 
+				alertCOISA("Sending", "Starting to send!");
 	      expected = "k";
 	      sendNext(2); //Sends size
 				return true;
 	    }
 			else if (expected == "k" & (end) == bufferOut.length) { //End of buffer
+				alertCOISA("Sending", "Sending complete!");
 				expected = "";
 				return true;
 			}
-	    else sendNext(1); //Keeps sending code
+	    else sendNext(Math.min(20, bufferOut.length - end)); //Keeps sending code
 	    return true;
 	  }
 	  else {
-			console.log("Error, did not meet expected response from COISA");
+			alertCOISA("Protocol", "Expected <" + expected + "> from coisa, got <" + received + ">");
 			return false;
 		}
 	};
@@ -52,7 +54,7 @@ var TM = new state();
 var sendX = function(binary) {
   TM.expected = "RD-OK";
   if (!myCharacteristic) {
-    console.log('Argh! ' + 'No connection active!!');
+		alertCOISA("Connection", "There is no active connection");
     return;
   }
   var buffer = new ArrayBuffer(binary.length + 4);
@@ -78,7 +80,13 @@ function onStartButtonClick() {
   if (characteristicUuid.startsWith('0x')) {
     characteristicUuid = parseInt(characteristicUuid, 16);
   }
-
+	if (myCharacteristic !== undefined) {
+		myCharacteristic.removeEventListener('characteristicvaluechanged', handleNotifications);
+		if (myCharacteristic.service.device.gatt.connected) {
+			myCharacteristic.service.device.gatt.connected = false;
+		}
+		myCharacteristic = null;
+	}
   console.log('Requesting Bluetooth Device...');
   navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
   .then(device => device.gatt.connect())
@@ -88,6 +96,7 @@ function onStartButtonClick() {
     myCharacteristic = characteristic;
     return myCharacteristic.startNotifications().then(_ => {
       console.log('> Notifications started');
+			alertCOISA("Connection", "Connection established");
       myCharacteristic.addEventListener('characteristicvaluechanged',
         handleNotifications);
     });

@@ -374,6 +374,14 @@
 
       localStorage.setItem("xmlState", xmlText);
     }
+    function alertCOISA(title, message) {
+      console.log("**************************************>>>");
+      console.log(title);
+      console.log("-------------------------------------->>>");
+      console.log(message);
+      console.log("**************************************>>>");
+    }
+    
     function toCode(lang, download, upload) {
       var text = Blockly[lang].workspaceToCode(workspace);
       // console.log(text);
