@@ -17,9 +17,9 @@
       window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
   </script>
 
-<!--  <script src="sweetalert/dist/sweetalert.min.js"></script>
+  <script src="sweetalert/dist/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="sweetalert/dist/sweetalert.css">
-   -->
+
   <style>
     html, body {
       height: 100%;
@@ -112,7 +112,7 @@
     </category>
     <category name="Movement">
 	  <block type="setup_movement"></block>
-      <block type="movement_robot"></block>
+      <!-- <block type="movement_robot"></block> -->
 	  <block type="go_forward"></block>
 	  <block type="go_left"></block>
 	  <block type="go_right"></block>
@@ -375,11 +375,12 @@
       localStorage.setItem("xmlState", xmlText);
     }
     function alertCOISA(title, message) {
-      console.log("**************************************>>>");
-      console.log(title);
-      console.log("-------------------------------------->>>");
-      console.log(message);
-      console.log("**************************************>>>");
+      swal(title, message);
+      // console.log("**************************************>>>");
+      // console.log(title);
+      // console.log("-------------------------------------->>>");
+      // console.log(message);
+      // console.log("**************************************>>>");
     }
     
     function toCode(lang, download, upload) {
