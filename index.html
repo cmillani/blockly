@@ -86,7 +86,7 @@
   <div id="blocklyDiv" style="position: absolute"></div>
 
   <xml id="toolbox" style="display: none">
-    <category name="Logic">
+    <!-- <category name="Logic">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>
       <block type="logic_operation"></block>
@@ -94,10 +94,10 @@
       <block type="logic_boolean"></block>
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
-    </category>
-    <category name="Events">
-	  <block type="event_onstart"></block>
-	  <block type="event_btdown"></block>
+    </category> -->
+    <category name="Events" colour="0">
+	    <block type="event_onstart"></block>
+      <block type="event_btdown"></block>
       <block type="event_distancechange">
         <value name="threshold">
           <block type="math_number">
@@ -106,26 +106,26 @@
         </value>
       </block>
     </category>
-    <category name="Lights">
-	  <block type="led_red"></block>
-	  <block type="led_green"></block>
+    <category name="Lights" colour="60">
+  	  <block type="led_red"></block>
+  	  <block type="led_green"></block>
     </category>
-    <category name="Movement">
-	  <block type="setup_movement"></block>
-      <!-- <block type="movement_robot"></block> -->
-	  <block type="go_forward"></block>
-	  <block type="go_left"></block>
-	  <block type="go_right"></block>
-	  <block type="stop"></block>
+    <category name="Movement" colour="120">
+  	  <block type="setup_movement"></block>
+        <!-- <block type="movement_robot"></block> -->
+  	  <block type="go_forward"></block>
+  	  <block type="go_left"></block>
+  	  <block type="go_right"></block>
+  	  <block type="stop"></block>
     </category>
-    <category name="Serial">
-	  <block type="serial_printnum">
+    <!-- <category name="Serial">
+    <block type="serial_printnum">
         <value name="NUM">
           <block type="math_number">
             <field name="NUM">0</field>
           </block>
         </value>
-	  </block>
+    </block>
       <block type="serial_print">
         <value name="TEXT">
           <block type="text">
@@ -133,8 +133,8 @@
           </block>
         </value>
       </block>
-    </category>
-    <category name="Loops">
+    </category> -->
+    <category name="Loops" colour="180">
       <block type="controls_repeat_ext">
         <value name="TIMES">
           <block type="math_number">
@@ -142,7 +142,7 @@
           </block>
         </value>
       </block>
-      <block type="controls_whileUntil"></block>
+      <!-- <block type="controls_whileUntil"></block>
       <block type="controls_for">
         <value name="FROM">
           <block type="math_number">
@@ -161,11 +161,11 @@
         </value>
       </block>
       <block type="controls_forEach"></block>
-      <block type="controls_flow_statements"></block>
+      <block type="controls_flow_statements"></block> -->
     </category>
-    <category name="Math">
+    <category name="Math" colour="240">
       <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
+      <!-- <block type="math_arithmetic"></block>
       <block type="math_single"></block>
       <block type="math_trig"></block>
       <block type="math_constant"></block>
@@ -204,11 +204,11 @@
           </block>
         </value>
       </block>
-      <block type="math_random_float"></block>
+      <block type="math_random_float"></block> -->
     </category>
-    <category name="Text">
+    <category name="Text" colour="300">
       <block type="text"></block>
-      <block type="text_join"></block>
+      <!-- <block type="text_join"></block>
       <block type="text_append">
         <value name="TEXT">
           <block type="text"></block>
@@ -244,9 +244,9 @@
         <value name="TEXT">
           <block type="text"></block>
         </value>
-      </block>
+      </block> -->
     </category>
-    <category name="Lists">
+    <!-- <category name="Lists">
       <block type="lists_create_empty"></block>
       <block type="lists_create_with"></block>
       <block type="lists_repeat">
@@ -293,8 +293,8 @@
           </block>
         </value>
       </block>
-    </category>
-    <category name="Colour">
+    </category> -->
+    <!-- <category name="Colour">
       <block type="colour_picker"></block>
       <block type="colour_random"></block>
       <block type="colour_rgb">
@@ -331,10 +331,10 @@
           </block>
         </value>
       </block>
-    </category>
-    <sep></sep>
-    <category name="Variables" custom="VARIABLE"></category>
-    <category name="Functions" custom="PROCEDURE"></category>
+    </category> -->
+    <!-- <sep></sep> -->
+    <!-- <category name="Variables" custom="VARIABLE"></category> -->
+    <!-- <category name="Functions" custom="PROCEDURE"></category> -->
   </xml>
 
   <script>
