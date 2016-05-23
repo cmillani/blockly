@@ -17,9 +17,21 @@
   	    byteArray[x] = binary[x];
   	}
     // 
-    var string = new TextDecoder("utf-8").decode(byteArray);
+    var program = "";
+    // var string = new TextDecoder("utf-8").decode(byteArray);
     // console.log(string);
-    return string;
+    // console.log("AA");
+    for (var item in byteArray) {
+      program += String.fromCharCode(byteArray[item]);
+    }
+    // console.log(program);
+    // for (var item in program) {
+      // console.log(program.charCodeAt(item))
+    // }
+    // console.log(byteArray);
+    // console.log("BB");
+    // console.log(string);
+    return program;
   }
   function test() {
     return 'Yep, been here done this';
