@@ -15,7 +15,7 @@
   	for (var x = 0; x < byteArray.length; x++){
   	    byteArray[x] = binary[x];
   	}
-    android.onData(byteArray);
+    return byteArray;
   }
   </script>
   <style>
@@ -45,7 +45,7 @@
   <table>
     <tr>
       <td>
-        <input type="button" value="Ask Upload" onclick="toCode()">
+        <input type="button" value="Ask Upload" onclick="android.onData(toCode())">
         <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')">
       </td>
     </tr>
