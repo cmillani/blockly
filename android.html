@@ -10,15 +10,19 @@
   <script>
   function toCode() {
     var text = Blockly['Coisa'].workspaceToCode(workspace);
+    // console.log(text);
     var binary = Blockly.Coisa.Assembler.assembly(text);
   	var byteArray = new Uint8Array(binary);
   	for (var x = 0; x < byteArray.length; x++){
   	    byteArray[x] = binary[x];
   	}
-    return byteArray;
+    // 
+    var string = new TextDecoder("utf-8").decode(byteArray);
+    // console.log(string);
+    return string;
   }
   function test() {
-    return "Yep, been here done this";
+    return 'Yep, been here done this';
   }
   </script>
   <style>
