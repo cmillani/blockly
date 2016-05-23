@@ -33,7 +33,7 @@
   <table>
     <tr>
       <td>
-        <input type="button" value="Ask Upload" onclick="toCode('Coisa', false, true)">
+        <input type="button" value="Ask Upload" onclick="android.onData('Aaaalou!')">
       </td>
     </tr>
     <tr>
@@ -45,13 +45,31 @@
   <div id="blocklyDiv" style="position: absolute"></div>
 
   <xml id="toolbox" style="display: none">
-    <block type="controls_if"></block>
-    <block type="logic_compare"></block>
-    <block type="controls_repeat_ext"></block>
+    <block type="event_onstart"></block>
+    <block type="event_btdown"></block>
+    <block type="event_distancechange">
+      <value name="threshold">
+        <block type="math_number">
+          <field name="NUM">10</field>
+        </block>
+      </value>
+    </block>
+	  <block type="led_red"></block>
+	  <block type="led_green"></block>
+    <block type="setup_movement"></block>
+	  <block type="go_forward"></block>
+	  <block type="go_left"></block>
+	  <block type="go_right"></block>
+	  <block type="stop"></block>
+    <block type="controls_repeat_ext">
+      <value name="TIMES">
+        <block type="math_number">
+          <field name="NUM">10</field>
+        </block>
+      </value>
+    </block>
     <block type="math_number"></block>
-    <block type="math_arithmetic"></block>
     <block type="text"></block>
-    <block type="text_print"></block>
   </xml>
 
   <script>
