@@ -57,6 +57,8 @@
     }
     #blocklyArea {
       height: 90%;
+      -webkit-transform: translate3d(0,0,0);
+      transform: translate3d(0, 0, 0);
     }
   </style>
 </head>
@@ -67,8 +69,8 @@
         <!-- <input type="button" value="Ask Upload" onclick="android.onData(toCode())"> -->
         <!-- <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')"> -->
         <!-- <input type="button" value="Funct" onclick="android.onData(test())"> -->
-        <input type="button" style="-webkit-appearance: none;height:100%;width:50%;font-size: 100%" value="Upload/Connect" onclick="console.log(toCode())">
-        <input type="button" style="-webkit-appearance: none;height:100%;width:50%;font-size: 100%;float: right;" value="Reset" onclick="android.onReset()">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%" value="Upload/Connect" onclick="console.log(toCode())">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%;float: right;" value="Reset" onclick="android.onReset()">
       </td>
     </tr>
     <tr>
@@ -85,7 +87,7 @@
     <block type="event_distancechange">
       <value name="threshold">
         <block type="math_number">
-          <field name="NUM">10</field>
+          <field name="NUM">20</field>
         </block>
       </value>
     </block>
@@ -96,6 +98,9 @@
 	  <block type="go_left"></block>
 	  <block type="go_right"></block>
 	  <block type="stop"></block>
+    <block type="step_forward"></block>
+    <block type="turn_right"></block>
+    <block type="turn_left"></block>
     <block type="controls_repeat_ext">
       <value name="TIMES">
         <block type="math_number">
