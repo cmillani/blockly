@@ -103,3 +103,36 @@ Blockly.Blocks['stop'] = {
     this.setHelpUrl('http://www.google.com/');
   }
 };
+Blockly.Blocks['step_forward'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Step Forward");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};
+Blockly.Blocks['turn_left'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Turn Left");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};
+Blockly.Blocks['turn_right'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("Turn Right");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.google.com/');
+  }
+};

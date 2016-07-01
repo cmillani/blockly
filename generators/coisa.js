@@ -159,6 +159,13 @@ Blockly.Coisa.finish = function(code) {
 	final_code += "event_end:\n";
 	final_code += "li	$v0, 10\n";
 	final_code += "syscall\n";
+	
+	if(!Blockly.Coisa['mov_handlers'])
+	{
+		Blockly.Coisa['mov_handlers'] = ""
+	} 
+	final_code += Blockly.Coisa['mov_handlers'];
+	
 	final_code += ".data\n";
 	final_code += "movmID:	.asciiz \"MOVM\"\n";
   final_code += "rxtxID:	.asciiz \"RXTX\"\n";
@@ -166,6 +173,7 @@ Blockly.Coisa.finish = function(code) {
 	final_code += "usID:	.asciiz \"US_S\"\n";
 	final_code += "usIDf:	.asciiz \"US_F\"\n";
 	final_code += "ledID:	.asciiz \"LEDS\"\n";
+	final_code += "encdID:	.asciiz \"ENCD\"\n";
 	
 	code = final_code
 	
@@ -192,6 +200,7 @@ Blockly.Coisa.finish = function(code) {
   // Clean up temporary data.
 	delete Blockly.Coisa['events_init'];
   delete Blockly.Coisa.additionalData;
+	delete Blockly.Coisa['mov_handlers'];
 	
   delete Blockly.Coisa.definitions_;
   delete Blockly.Coisa.functionNames_;

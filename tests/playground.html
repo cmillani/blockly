@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Blockly Playground</title>
+<script src="FileSaver.min.js"></script>
 <script src="../blockly_uncompressed.js"></script>
 <script src="../generators/javascript.js"></script>
 <script src="../generators/javascript/logic.js"></script>
@@ -171,7 +172,7 @@ function toCode(lang, download) {
   	{
   		var blob = new Blob([byteArray], {type: "application/octet-stream"});
       console.log(blob);
-  	    // saveAs(blob, "data.x");
+  	  saveAs(blob, "data.x");
   	}
   }
   taChange();
@@ -332,6 +333,9 @@ h1 {
 	  <block type="go_left"></block>
 	  <block type="go_right"></block>
 	  <block type="stop"></block>
+    <block type="step_forward"></block>
+    <block type="turn_right"></block>
+    <block type="turn_left"></block>
     </category>
     <category name="Serial">
 	  <block type="serial_printnum">

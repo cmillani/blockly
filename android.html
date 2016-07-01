@@ -56,7 +56,7 @@
       width: 100%;
     }
     #blocklyArea {
-      height: 99%;
+      height: 90%;
     }
   </style>
 </head>
@@ -64,10 +64,11 @@
   <table>
     <tr>
       <td>
-        <input type="button" value="Ask Upload" onclick="android.onData(toCode())">
-        <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')">
-        <input type="button" value="Funct" onclick="android.onData(test())">
-        <input type="button" value="LogCode" onclick="console.log(toCode())">
+        <!-- <input type="button" value="Ask Upload" onclick="android.onData(toCode())"> -->
+        <!-- <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')"> -->
+        <!-- <input type="button" value="Funct" onclick="android.onData(test())"> -->
+        <input type="button" style="-webkit-appearance: none;height:100%;width:50%;font-size: 100%" value="Upload/Connect" onclick="console.log(toCode())">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:50%;font-size: 100%;float: right;" value="Reset" onclick="android.onReset()">
       </td>
     </tr>
     <tr>
@@ -90,7 +91,7 @@
     </block>
 	  <block type="led_red"></block>
 	  <block type="led_green"></block>
-    <block type="setup_movement"></block>
+    <!-- <block type="setup_movement"></block> -->
 	  <block type="go_forward"></block>
 	  <block type="go_left"></block>
 	  <block type="go_right"></block>
