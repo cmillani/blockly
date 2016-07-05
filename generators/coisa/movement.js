@@ -93,8 +93,8 @@ Blockly.Coisa['stop'] = function(block) {
 };
 
 var forward_th = 60;
-var left_th = 20;
-var right_th = 20;
+var left_th = 9;
+var right_th = 9;
 
 Blockly.Coisa['step_forward'] = function(block) {
   if(!Blockly.Coisa['movements_seq'])
