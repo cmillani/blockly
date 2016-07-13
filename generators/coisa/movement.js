@@ -92,218 +92,176 @@ Blockly.Coisa['stop'] = function(block) {
   return code;
 };
 
-var forward_th = 60;
+var forward_th = 20;
 var left_th = 9;
 var right_th = 9;
 
 Blockly.Coisa['step_forward'] = function(block) {
-  if(!Blockly.Coisa['movements_seq'])
-  {
-    Blockly.Coisa['movements_seq'] = 0;
-  }
-  Blockly.Coisa['movements_seq'] += 1;
-	var code = "";
-	//Here we check the previous and the next block
-	//We need to know if we need to start the motor now or during the handler
-	var prev, next, first, last;
-	[prev, next] = getNeighbours(block);
-	
-	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
-		first = true;
-	}
-	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
-		last = true;
-	}
-	//Knowing our neighbours we can now create the code
-	if (first) {
-		//Sets up to go forward
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 21\n";
-		code += "la	$t4, movmID\n";
-		code += "syscall\n";
-		//Call Set threshold
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 7\n";
-		code += "li	$a0,"+forward_th+"\n"; //Threshold here
-		code += "la	$t4, encdID\n";
-		code += "syscall\n";
-		//Registers handler to movement threshold
-		code += "li	$a0, 1\n";
-		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";
-		code += "la	$a2, encdID\n";
-		code += "li	$v0, 14\n";
-		code += "syscall\n";
-	}
-	//If not first, must only register a handler
-	setup_next(last, next);
+	//Sets forward
+	var code = "li	$v0, 12\n";
+	code += "li	$v1, 21\n";
+	code += "la	$t4, movmID\n";
+	code += "syscall\n";
+	//Holds
+	code += "li	$v0, 18\n";
+	code += "la	$a0, "+forward_th+"\n"; //Threshold
+	code += "syscall\n";
   return code;
+  // if(!Blockly.Coisa['movements_seq'])
+//   {
+//     Blockly.Coisa['movements_seq'] = 0;
+//   }
+//   Blockly.Coisa['movements_seq'] += 1;
+// 	var code = "";
+// 	//Here we check the previous and the next block
+// 	//We need to know if we need to start the motor now or during the handler
+// 	var prev, next, first, last;
+// 	[prev, next] = getNeighbours(block);
+//
+// 	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
+// 		first = true;
+// 	}
+// 	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
+// 		last = true;
+// 	}
+// 	//Knowing our neighbours we can now create the code
+// 	if (first) {
+// 		code += "li	$v0, 16\n"; //syscall 16: registers mov
+// 		code += "li	$a0, "+forward_th+"\n"; //Threshold here
+// 		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";//Handler for mov end
+// 		code += "li	$a2, 1\n"; //should start moving
+// 		code += "li	$a3, 21\n"; //go forward
+// 		code += "syscall\n";
+// 	}
+// 	//If not first, must only register a handler
+// 	setup_next(last, next);
+//   return code;
 };
 Blockly.Coisa['turn_right'] = function(block) {
-  if(!Blockly.Coisa['movements_seq'])
-  {
-    Blockly.Coisa['movements_seq'] = 0;
-  }
-  Blockly.Coisa['movements_seq'] += 1;
-	var code = "";
-	//Here we check the previous and the next block
-	//We need to know if we need to start the motor now or during the handler
-	var prev, next, first, last;
-	[prev, next] = getNeighbours(block);
-	
-	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
-		first = true;
-	}
-	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
-		last = true;
-	}
-	//Knowing our neighbours we can now create the code
-	if (first) {
-		//Sets up to go right
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 23\n";
-		code += "la	$t4, movmID\n";
-		code += "syscall\n";
-		//Call Set threshold
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 7\n";
-		code += "li	$a0,"+right_th+"\n"; //Threshold here
-		code += "la	$t4, encdID\n";
-		code += "syscall\n";
-		//Registers handler to movement threshold
-		code += "li	$a0, 1\n";
-		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";
-		code += "la	$a2, encdID\n";
-		code += "li	$v0, 14\n";
-		code += "syscall\n";
-	}
-	//If not first, must only register a handler
-	setup_next(last, next);
+	var code = "li	$v0, 12\n";
+	code += "li	$v1, 23\n";
+	code += "la	$t4, movmID\n";
+	code += "syscall\n";
+	//Holds
+	code += "li	$v0, 18\n";
+	code += "la	$a0, "+right_th+"\n"; //Threshold
+	code += "syscall\n";
   return code;
+  // if(!Blockly.Coisa['movements_seq'])
+//   {
+//     Blockly.Coisa['movements_seq'] = 0;
+//   }
+//   Blockly.Coisa['movements_seq'] += 1;
+// 	var code = "";
+// 	//Here we check the previous and the next block
+// 	//We need to know if we need to start the motor now or during the handler
+// 	var prev, next, first, last;
+// 	[prev, next] = getNeighbours(block);
+//
+// 	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
+// 		first = true;
+// 	}
+// 	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
+// 		last = true;
+// 	}
+// 	//Knowing our neighbours we can now create the code
+// 	if (first) {
+// 		code += "li	$v0, 16\n"; //syscall 16: registers mov
+// 		code += "li	$a0, "+right_th+"\n"; //Threshold here
+// 		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";//Handler for mov end
+// 		code += "li	$a2, 1\n"; //should start moving
+// 		code += "li	$a3, 23\n"; //go right
+// 		code += "syscall\n";
+// 	}
+// 	//If not first, must only register a handler
+// 	setup_next(last, next);
+//   return code;
 };
 Blockly.Coisa['turn_left'] = function(block) {
-  if(!Blockly.Coisa['movements_seq'])
-  {
-    Blockly.Coisa['movements_seq'] = 0;
-  }
-  Blockly.Coisa['movements_seq'] += 1;
-	var code = "";
-	//Here we check the previous and the next block
-	//We need to know if we need to start the motor now or during the handler
-	var prev, next, first, last;
-	[prev, next] = getNeighbours(block);
-	
-	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
-		first = true;
-	}
-	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
-		last = true;
-	}
-	//Knowing our neighbours we can now create the code
-	if (first) {
-		//Sets up to go forward
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 22\n";
-		code += "la	$t4, movmID\n";
-		code += "syscall\n";
-		//Call Set threshold
-		code += "li	$v0, 12\n";
-		code += "li	$v1, 7\n";
-		code += "li	$a0,"+left_th+"\n"; //Threshold here
-		code += "la	$t4, encdID\n";
-		code += "syscall\n";
-		//Registers handler to movement threshold
-		code += "li	$a0, 1\n";
-		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";
-		code += "la	$a2, encdID\n";
-		code += "li	$v0, 14\n";
-		code += "syscall\n";
-	}
-	//If not first, must only register a handler
-	setup_next(last, next);
+	var code = "li	$v0, 12\n";
+	code += "li	$v1, 22\n";
+	code += "la	$t4, movmID\n";
+	code += "syscall\n";
+	//Holds
+	code += "li	$v0, 18\n";
+	code += "la	$a0, "+left_th+"\n"; //Threshold
+	code += "syscall\n";
   return code;
+  // if(!Blockly.Coisa['movements_seq'])
+//   {
+//     Blockly.Coisa['movements_seq'] = 0;
+//   }
+//   Blockly.Coisa['movements_seq'] += 1;
+// 	var code = "";
+// 	//Here we check the previous and the next block
+// 	//We need to know if we need to start the motor now or during the handler
+// 	var prev, next, first, last;
+// 	[prev, next] = getNeighbours(block);
+//
+// 	if (prev != "step_forward" && prev != "turn_left" && prev != "turn_right") {
+// 		first = true;
+// 	}
+// 	if (next != "step_forward" && next != "turn_left" && next != "turn_right") {
+// 		last = true;
+// 	}
+// 	//Knowing our neighbours we can now create the code
+// 	if (first) {
+// 		code += "li	$v0, 16\n"; //syscall 16: registers mov
+// 		code += "li	$a0, "+left_th+"\n"; //Threshold here
+// 		code += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";//Handler for mov end
+// 		code += "li	$a2, 1\n"; //should start moving
+// 		code += "li	$a3, 23\n"; //go forward
+// 		code += "syscall\n";
+// 	}
+// 	//If not first, must only register a handler
+// 	setup_next(last, next);
+//   return code;
 };
 
-var getNeighbours = function(block) {
-	var prev;
-	var next;
-	try {prev = block.previousConnection.targetConnection.sourceBlock_.type;}
-	catch(err) {prev = "";}
-	try {next = block.nextConnection.targetConnection.sourceBlock_.type;}
-	catch(err) {next = "";}
-	var first = false;
-	var last = false;
-	
-	return [prev, next];
-}
+// var getNeighbours = function(block) {
+// 	var prev;
+// 	var next;
+// 	try {prev = block.previousConnection.targetConnection.sourceBlock_.type;}
+// 	catch(err) {prev = "";}
+// 	try {next = block.nextConnection.targetConnection.sourceBlock_.type;}
+// 	catch(err) {next = "";}
+// 	var first = false;
+// 	var last = false;
+//
+// 	return [prev, next];
+// }
 
 //Sets up handler for this and the next movement
-var setup_next = function(last, next) {
-	if (!Blockly.Coisa['mov_handlers']) {
-		Blockly.Coisa['mov_handlers'] = "";
-	}
-	//Sets handler for mov end
-	Blockly.Coisa['mov_handlers'] += "mov"+Blockly.Coisa['movements_seq']+"handler:\n";
-	//Removes this handler handler
-	Blockly.Coisa['mov_handlers'] += "li	$a0, 1\n";
-	Blockly.Coisa['mov_handlers'] += "la	$a1, mov"+Blockly.Coisa['movements_seq']+"handler\n";
-	Blockly.Coisa['mov_handlers'] += "la	$a2, encdID\n";
-	Blockly.Coisa['mov_handlers'] += "li	$v0, 15\n";
-	Blockly.Coisa['mov_handlers'] += "syscall\n";
-	if (last) { // If is last stop all motors
-		Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-		Blockly.Coisa['mov_handlers'] += "li	$v1, 24\n";
-		Blockly.Coisa['mov_handlers'] += "la	$t4, movmID\n";
-		Blockly.Coisa['mov_handlers'] += "syscall\n";
-	} else {
-		switch (next) {
-			case "step_forward":
-				//Set Threshold
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 7\n";
-				Blockly.Coisa['mov_handlers'] += "li	$a0,"+forward_th+"\n"; //Threshold here
-				Blockly.Coisa['mov_handlers'] += "la	$t4, encdID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				//Go forward
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 21\n";
-				Blockly.Coisa['mov_handlers'] += "la	$t4, movmID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				break;
-			case "turn_left":
-				//Set Threshold
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 7\n";
-				Blockly.Coisa['mov_handlers'] += "li	$a0,"+left_th+"\n"; //Threshold here
-				Blockly.Coisa['mov_handlers'] += "la	$t4, encdID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				//Go left
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 22\n";
-				Blockly.Coisa['mov_handlers'] += "la	$t4, movmID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				break;
-			case "turn_right":
-				//Set Threshold
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 7\n";
-				Blockly.Coisa['mov_handlers'] += "li	$a0,"+right_th+"\n"; //Threshold here
-				Blockly.Coisa['mov_handlers'] += "la	$t4, encdID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				//Go Right
-				Blockly.Coisa['mov_handlers'] += "li	$v0, 12\n";
-				Blockly.Coisa['mov_handlers'] += "li	$v1, 23\n";
-				Blockly.Coisa['mov_handlers'] += "la	$t4, movmID\n";
-				Blockly.Coisa['mov_handlers'] += "syscall\n";
-				break;
-		}
-		//Registers handler to next movement threshold
-		Blockly.Coisa['mov_handlers'] += "li	$a0, 1\n";
-		Blockly.Coisa['mov_handlers'] += "la	$a1, mov"+(Blockly.Coisa['movements_seq']+1)+"handler\n";
-		Blockly.Coisa['mov_handlers'] += "la	$a2, encdID\n";
-		Blockly.Coisa['mov_handlers'] += "li	$v0, 14\n";
-		Blockly.Coisa['mov_handlers'] += "syscall\n";
-	}
-	//Returns
-	Blockly.Coisa['mov_handlers'] += "jr	$ra\n";
-	Blockly.Coisa['mov_handlers'] += "nop\n";
-}
+// var setup_next = function(last, next) {
+// 	if (!Blockly.Coisa['mov_handlers']) {
+// 		Blockly.Coisa['mov_handlers'] = "";
+// 	}
+//
+// 	Blockly.Coisa['mov_handlers'] += "mov"+Blockly.Coisa['movements_seq']+"handler:\n"; //Handler Label
+// 	Blockly.Coisa['mov_handlers'] += "li	$v0, 17\n";
+// 	Blockly.Coisa['mov_handlers'] += "la	$t0, mov"+Blockly.Coisa['movements_seq']+"handler\n"; //Label to be removed on syscall
+// 	if (last) {
+// 		Blockly.Coisa['mov_handlers'] += "li	$a2, 24\n"; //Sets next movement - stop
+// 		Blockly.Coisa['mov_handlers'] += "li	$a3, 0\n"; //No next handler
+// 	} else {
+// 		switch (next) {
+// 			case "step_forward":
+// 				Blockly.Coisa['mov_handlers'] += "li	$a0, "+forward_th+"\n"; //Threshold here
+// 				Blockly.Coisa['mov_handlers'] += "li	$a2, 21\n"; //Sets next movement
+// 				break;
+// 			case "turn_left":
+// 				Blockly.Coisa['mov_handlers'] += "li	$a0, "+left_th+"\n"; //Threshold here
+// 				Blockly.Coisa['mov_handlers'] += "li	$a2, 22\n"; //Sets next movement
+// 				break;
+// 			case "turn_right":
+// 				Blockly.Coisa['mov_handlers'] += "li	$a0, "+right_th+"\n"; //Threshold here
+// 				Blockly.Coisa['mov_handlers'] += "li	$a2, 23\n"; //Sets next movement
+// 				break;
+// 		}
+// 		Blockly.Coisa['mov_handlers'] += "li	$a3, 1\n"; //Sets next Handler
+// 		Blockly.Coisa['mov_handlers'] += "la	$a1, mov"+(Blockly.Coisa['movements_seq']+1)+"handler\n"; //Next Label :)
+// 	}
+// 	Blockly.Coisa['mov_handlers'] += "syscall\n";
+// 	Blockly.Coisa['mov_handlers'] += "jr	$ra\n";
+// 	Blockly.Coisa['mov_handlers'] += "nop\n";
+// }
