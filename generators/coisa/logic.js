@@ -31,22 +31,50 @@ goog.require('Blockly.Coisa');
 
 Blockly.Coisa['controls_if'] = function(block) {
   // If/elseif/else condition.
+	
+  if(!Blockly.Coisa['controls_if'].count)
+  {
+    Blockly.Coisa['controls_if'].count = 0;
+  }
+	Blockly.Coisa['controls_if'].count += 1;
+	
   var n = 0;
   var argument = Blockly.Coisa.valueToCode(block, 'IF' + n,
-      Blockly.Coisa.ORDER_NONE) || 'false';
+      Blockly.Coisa.ORDER_NONE) || '0';
   var branch = Blockly.Coisa.statementToCode(block, 'DO' + n);
-  var code = 'if (' + argument + ') {\n' + branch + '}';
+	
+  // var code = 'if (' + argument + ') {\n' + branch + '}';
+	
+	var code = "";
+	code += argument; //Expects argument to be on $s2
+	code += "beq	$v2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks else or else if
+	code += "nop\n";
+	code += branch;
+	code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
+	code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n";
+		
   for (n = 1; n <= block.elseifCount_; n++) {
     argument = Blockly.Coisa.valueToCode(block, 'IF' + n,
-        Blockly.Coisa.ORDER_NONE) || 'false';
+        Blockly.Coisa.ORDER_NONE) || '0';
+				
     branch = Blockly.Coisa.statementToCode(block, 'DO' + n);
-    code += ' else if (' + argument + ') {\n' + branch + '}';
+		
+		code += argument; //Expects argument to be on $s2
+		code += "beq	$v2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks next else or else if
+		code += "nop\n";
+		code += branch;
+		code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
+		code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n";
+		
   }
   if (block.elseCount_) {
     branch = Blockly.Coisa.statementToCode(block, 'ELSE');
-    code += ' else {\n' + branch + '}';
+    // code += ' else {\n' + branch + '}';
+		code += branch;
   }
-  return code + '\n';
+	
+	code += "endif_"+Blockly.Coisa['controls_if'].count+"\n";
+  return code;
 };
 
 Blockly.Coisa['logic_compare'] = function(block) {

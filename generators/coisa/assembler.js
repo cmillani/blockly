@@ -124,7 +124,9 @@ function InterpretLine(line)
 		TranslateDirective(line);
 	}
 	else if (Decoder.getType(line) == Decoder.types.Label) {
-		Blockly.Coisa.Assembler.labels.push(new Label(line));
+		// console.log(line);
+		Label(line);
+		// Blockly.Coisa.Assembler.labels.push(new Label(line));
 	}
 	else if (Decoder.getType(line) == Decoder.types.PseudoInstruction) {
 		var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);

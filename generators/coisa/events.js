@@ -29,7 +29,7 @@ goog.provide('Blockly.Coisa.events');
 goog.require('Blockly.Coisa');
 
 Blockly.Coisa['event_onstart'] = function(block) {
-  var statements_name = Blockly.Coisa.statementToCode(block, 'CODE');
+  var statements_name = Blockly.Coisa.statementToCode(block, 'CODE', Blockly.Coisa.ORDER_NONE);
 	var code = "main:\n"
 	code += "addiu	$sp,$sp,-4\n";
 	code += "sw	$ra,0($sp)\n";

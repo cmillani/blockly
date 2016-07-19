@@ -55,28 +55,31 @@ Blockly.Coisa['controls_repeat_ext'] = function(block) {
         'repeat_end', Blockly.Variables.NAME_TYPE);
     // code += 'var ' + endVar + ' = ' + repeats + ';\n'; ---->>>> TODO: New variable created, alloc space
   }
-  code += "addiu	$sp,$sp,-8\n";
-  code += "sw	$s0,0($sp)\n";
-  code += "sw	$s1,4($sp)\n";
+  code += "addiu	$sp,$sp,-8\n"; //Alloc stack
   code += "li	$s0,0\n";
 	code += repeats; //Loads the control variable
-  code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
-  code += "bge	$s0,$s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
-  code += "nop\n";
 	
+  code += "repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
+	
+  code += "bge	$s0,$s1,endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
+	code += "nop\n";
+	
+  code += "sw	$s0,0($sp)\n"; //Saves both variables
+  code += "sw	$s1,4($sp)\n";
+
 	code += branch; //Gets the code inside the loop
   
-  code += "addiu	$s0, $s0, 1\n";
+  code += "lw	$s1,4($sp)\n"; //Recovers both variables
+  code += "lw	$s0,0($sp)\n";
+  code += "addiu	$s0, $s0, 1\n"; //Adds 1 to loop count
+	
   code += "j	repeatloop_"+Blockly.Coisa['controls_repeat_ext'].count+"\n";
   code += "nop\n";
+	
   code += "endrepeat_"+Blockly.Coisa['controls_repeat_ext'].count+":\n";
-  code += "lw	$s1,4($sp)\n";
-  code += "lw	$s0,0($sp)\n";
-  code += "addiu	$sp, $sp, 8\n";
-  // code += 'for (var ' + loopVar + ' = 0; ' +
-//       loopVar + ' < ' + endVar + '; ' +
-//       loopVar + '++) {\n' +
-//       branch + '}\n';
+  
+  code += "addiu	$sp, $sp, 8\n"; //Frees stack
+	
   return code;
 };
 
