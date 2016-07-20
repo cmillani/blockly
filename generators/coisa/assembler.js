@@ -28,7 +28,8 @@ Blockly.Coisa.Assembler = {
 				Label(lines[line]);
 			}
 			else if (Decoder.getType(lines[line]) == Decoder.types.PseudoInstruction) {
-				var splittedLine = lines[line].replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				var splittedLine = lines[line].replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				// var splittedLine = lines[line].replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 				if (splittedLine[0] == "")
 				{
 					splittedLine = splittedLine.slice(1,splittedLine.length);
@@ -56,7 +57,7 @@ Blockly.Coisa.Assembler = {
         // console.log("pseudo");
         // console.log(this.instructions[instruction])
 				var number = this.instructions[instruction].lineNumber;
-				var splittedLine = this.instructions[instruction].code.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+				var splittedLine = this.instructions[instruction].code.replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 				if (splittedLine[0] == "")
 				{
 					splittedLine = splittedLine.slice(1,splittedLine.length);
@@ -129,7 +130,7 @@ function InterpretLine(line)
 		// Blockly.Coisa.Assembler.labels.push(new Label(line));
 	}
 	else if (Decoder.getType(line) == Decoder.types.PseudoInstruction) {
-		var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+		var splittedLine = line.replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 		if (splittedLine[0] == "")
 		{
 			splittedLine = splittedLine.slice(1,splittedLine.length);
@@ -150,7 +151,7 @@ function InterpretLine(line)
 
 function Instruction(line)
 {
-	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	var splittedLine = line.replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 	if (splittedLine[0] == "")
 	{
 		splittedLine = splittedLine.slice(1,splittedLine.length);
@@ -203,7 +204,7 @@ function Instruction(line)
 function TranslateDirective(line)
 {
 	// console.log(line)
-	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	var splittedLine = line.replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 	var params = splittedLine.slice(1,splittedLine.length).join().split(/[,]+/);
 	var command = splittedLine[0];
 	// console.log(command);
@@ -259,7 +260,7 @@ function Label(line){
 	// console.log("Lab:")
 	// console.log(line);
 	// console.log(Blockly.Coisa.Assembler.memoryPosition());
-	var splittedLine = line.replace("\t"," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
+	var splittedLine = line.replace(/^\s+/, "").replace(/\s+/," ").replace(","," ").replace("("," ").replace(")","").split(/[ ]+/);
 	var command = splittedLine.slice(1,splittedLine.length).join(" ").split(/[,]+/);
 	var position = Blockly.Coisa.Assembler.memoryPosition();
 	var theName = splittedLine[0]

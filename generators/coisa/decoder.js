@@ -86,12 +86,12 @@ Decoder = {
 
 	//Gets "type" of a line
 	getType: function(line) {
-		var op = line.replace("\t"," ").split(/[ ]+/)[0]
+		var op = line.replace(/^\s+/, "").replace(/\s+/," ").split(" ")[0]
 		if (op == "")
 		{
-			op = line.replace("\t"," ").split(/[ ]+/)[1]
+			op = line.replace(/^\s+/, "").replace(/\s+/," ").split(" ")[1]
 		}
-		console.log(line.replace("\t"," ").split(" "))
+		// console.log(line.replace(/^\s+/, "").replace(/\s+/," ").split(" "))
 		// console.log(op);
 		if (op){
 			if (typeof this.Instructions.Pseudo[op.toLowerCase()] != 'undefined') return this.types.PseudoInstruction;
