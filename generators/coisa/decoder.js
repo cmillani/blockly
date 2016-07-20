@@ -91,7 +91,7 @@ Decoder = {
 		{
 			op = line.replace("\t"," ").split(/[ ]+/)[1]
 		}
-		// console.log(line.replace("\t"," ").split(" "))
+		console.log(line.replace("\t"," ").split(" "))
 		// console.log(op);
 		if (op){
 			if (typeof this.Instructions.Pseudo[op.toLowerCase()] != 'undefined') return this.types.PseudoInstruction;

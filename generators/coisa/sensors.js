@@ -34,6 +34,6 @@ Blockly.Coisa['distance'] = function(block) {
 	code += "li	$v0, 0\n";
 	code += "la	$t4, usID\n";
 	code += "syscall\n";
-	code += "addiu	$s1, $zero, $v0"
+	code += "addu	$s1, $zero, $v0"
   return code;
 };

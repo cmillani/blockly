@@ -16,7 +16,7 @@ Blockly.Coisa.Assembler = {
 		for (var line in lines)
 		{
 			// console.log(this.numberOfInstructions)
-      // console.log(lines[line])
+      console.log(lines[line])
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 				this.numberOfInstructions += 4;

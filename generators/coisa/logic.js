@@ -40,31 +40,31 @@ Blockly.Coisa['controls_if'] = function(block) {
 	
   var n = 0;
   var argument = Blockly.Coisa.valueToCode(block, 'IF' + n,
-      Blockly.Coisa.ORDER_NONE) || '0';
+      Blockly.Coisa.ORDER_NONE) || 'li	$s2, 0\n';
   var branch = Blockly.Coisa.statementToCode(block, 'DO' + n);
 	
   // var code = 'if (' + argument + ') {\n' + branch + '}';
 	
 	var code = "";
 	code += argument; //Expects argument to be on $s2
-	code += "beq	$v2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks else or else if
+	code += "beq	$s2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks else or else if
 	code += "nop\n";
 	code += branch;
 	code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
-	code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n";
+	code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+":\n";
 		
   for (n = 1; n <= block.elseifCount_; n++) {
     argument = Blockly.Coisa.valueToCode(block, 'IF' + n,
-        Blockly.Coisa.ORDER_NONE) || '0';
+        Blockly.Coisa.ORDER_NONE) || 'li	$s2, 0\n';
 				
     branch = Blockly.Coisa.statementToCode(block, 'DO' + n);
 		
 		code += argument; //Expects argument to be on $s2
-		code += "beq	$v2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks next else or else if
+		code += "beq	$s2, $zero, elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n"; // If not, checks next else or else if
 		code += "nop\n";
 		code += branch;
 		code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
-		code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+"\n";
+		code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+":\n";
 		
   }
   if (block.elseCount_) {
@@ -73,11 +73,18 @@ Blockly.Coisa['controls_if'] = function(block) {
 		code += branch;
   }
 	
-	code += "endif_"+Blockly.Coisa['controls_if'].count+"\n";
+	code += "endif_"+Blockly.Coisa['controls_if'].count+":\n";
   return code;
 };
 
 Blockly.Coisa['logic_compare'] = function(block) {
+	
+  if(!Blockly.Coisa['logic_compare'].count)
+  {
+    Blockly.Coisa['logic_compare'].count = 0;
+  }
+	Blockly.Coisa['logic_compare'].count += 1;
+	
   // Comparison operator.
   var OPERATORS = {
     'EQ': '==',
@@ -89,10 +96,46 @@ Blockly.Coisa['logic_compare'] = function(block) {
   };
   var operator = OPERATORS[block.getFieldValue('OP')];
   var order = (operator == '==' || operator == '!=') ?
-      Blockly.Coisa.ORDER_EQUALITY : Blockly.Coisa.ORDER_RELATIONAL;
-  var argument0 = Blockly.Coisa.valueToCode(block, 'A', order) || '0';
-  var argument1 = Blockly.Coisa.valueToCode(block, 'B', order) || '0';
-  var code = argument0 + ' ' + operator + ' ' + argument1;
+      Blockly.Coisa.ORDER_NONE : Blockly.Coisa.ORDER_NONE;
+			
+  var argument0 = Blockly.Coisa.valueToCode(block, 'A', order) || 'li	$s1, 0\n';
+  var argument1 = Blockly.Coisa.valueToCode(block, 'B', order) || 'li	$s1, 0\n';
+	
+	var code = "";
+	code += argument1;
+	code += "addu	$s3, $s1, $zero\n"; //Arg1 on s3
+	code += argument0; //Arg1 on s1
+	
+	switch (operator) {
+		case "==":
+			code += "addiu	$s2, $zero, 1\n";
+			code += "bne	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n"
+			code += "addiu	$s2, $zero, 0\n";
+			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n"
+			break;
+		case "!=":
+			code += "addiu	$s2, $zero, 1\n";
+			code += "beq	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n"
+			code += "addiu	$s2, $zero, 0\n";
+			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n"
+			break;
+		case "<":
+			code += "slt	$s2, $s1, $s3\n";
+			break;
+		case "<=":
+			code += "slt	$s2, $s3, $s1\n"; //Set if greater than
+			code += "nor	$s2, $s3, $zero\n"; //Negates
+			break;
+		case ">":
+			code += "slt	$s2, $s3, $s1\n";
+			break;
+		case ">=":
+			code += "slt	$s2, $s1, $s3\n"; //Set if less than
+			code += "nor	$s2, $s3, $zero\n"; //Negates
+			break;
+	}
+	
+  // var code = argument0 + ' ' + operator + ' ' + argument1;
   return [code, order];
 };
 
