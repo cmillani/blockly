@@ -51,6 +51,7 @@ Blockly.Coisa['controls_if'] = function(block) {
 	code += "nop\n";
 	code += branch;
 	code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
+	code += "nop\n";
 	code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+":\n";
 		
   for (n = 1; n <= block.elseifCount_; n++) {
@@ -64,6 +65,7 @@ Blockly.Coisa['controls_if'] = function(block) {
 		code += "nop\n";
 		code += branch;
 		code += "j	endif_"+Blockly.Coisa['controls_if'].count+"\n"; // Executed, should exit
+		code += "nop\n";
 		code += "elseif_"+n+"_"+Blockly.Coisa['controls_if'].count+":\n";
 		
   }
@@ -109,29 +111,33 @@ Blockly.Coisa['logic_compare'] = function(block) {
 	switch (operator) {
 		case "==":
 			code += "addiu	$s2, $zero, 1\n";
-			code += "bne	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n"
+			code += "beq	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n";
+			code += "nop\n";
 			code += "addiu	$s2, $zero, 0\n";
-			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n"
+			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n";
 			break;
 		case "!=":
 			code += "addiu	$s2, $zero, 1\n";
-			code += "beq	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n"
+			code += "bne	$s1, $s3, logic_comp_"+Blockly.Coisa['logic_compare'].count+"\n";
+			code += "nop\n";
 			code += "addiu	$s2, $zero, 0\n";
-			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n"
+			code += "logic_comp_"+Blockly.Coisa['logic_compare'].count+":\n";
 			break;
 		case "<":
 			code += "slt	$s2, $s1, $s3\n";
 			break;
 		case "<=":
 			code += "slt	$s2, $s3, $s1\n"; //Set if greater than
-			code += "nor	$s2, $s3, $zero\n"; //Negates
+			code += "xori	$s2, $s2, -1\n"; //Negates
+			code += "andi	$s2, $s2, 1\n"
 			break;
 		case ">":
 			code += "slt	$s2, $s3, $s1\n";
 			break;
 		case ">=":
 			code += "slt	$s2, $s1, $s3\n"; //Set if less than
-			code += "nor	$s2, $s3, $zero\n"; //Negates
+			code += "xori	$s2, $s2, -1\n"; //Negates
+			code += "andi	$s2, $s2, 1\n"
 			break;
 	}
 	

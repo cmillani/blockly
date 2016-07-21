@@ -222,7 +222,17 @@ Decoder = {
       // console.log(Blockly.Coisa.Assembler.labels)
       // console.log(immediate);
       // console.log(instruction);
-      immediate = Blockly.Coisa.Assembler.labels[immediate]
+			if (instruction == 'beq' || instruction == 'bne') { //FIXME: Should not check this way
+				// console.log(Blockly.Coisa.Assembler.labels);
+				// console.log("::::::::::::::::::::::::");
+				// console.log(instruction);
+				// console.log(params);
+				// console.log(Blockly.Coisa.Assembler.labels[immediate] >> 2);
+				// console.log("::::::::::::::::::::::::");
+				immediate = Blockly.Coisa.Assembler.labels[immediate] >> 2
+			} else {
+				immediate = Blockly.Coisa.Assembler.labels[immediate]
+			}
       // if (instruction == "lui")
 //       {
 //         immediate = immediate >> 16 & 0xFFFF

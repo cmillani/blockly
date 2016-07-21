@@ -16,7 +16,7 @@ Blockly.Coisa.Assembler = {
 		for (var line in lines)
 		{
 			// console.log(this.numberOfInstructions)
-      console.log(lines[line])
+      // console.log(lines[line])
 			if (lines[line] && Decoder.getType(lines[line]) == Decoder.types.Instruction) {
 				this.instructions.push(new Instruction(lines[line]));
 				this.numberOfInstructions += 4;
@@ -50,6 +50,8 @@ Blockly.Coisa.Assembler = {
 		}
 		for (var instruction in this.instructions)
 		{
+			// console.log("****************************")
+			// console.log("****************************")
 			// console.log(this.instructions[instruction])
 			// console.log(this.instructions[instruction].code)
       if(this.instructions[instruction].isPseudo)
@@ -65,11 +67,13 @@ Blockly.Coisa.Assembler = {
 				var instruction = splittedLine[0];
 				var params = splittedLine.slice(1,splittedLine.length).join().split(",");
 				var translated = Decoder.translatePseudo(instruction, params, number);
+				// console.log(translated);
 				for (var item in translated)
 				{
           // console.log(translated[item])
           var instruct = new Instruction(translated[item])
     			var newC = instruct.assembled();
+					// console.log(newC);
     			this.code.push(((newC >> 24) & 0xFF));
     			this.code.push(((newC >> 16) & 0xFF));
     			this.code.push(((newC >> 8) & 0xFF));
@@ -79,6 +83,7 @@ Blockly.Coisa.Assembler = {
 				}
       } else {
   			var newC = this.instructions[instruction].assembled();
+				// console.log(newC);
   			this.code.push(((newC >> 24) & 0xFF));
   			this.code.push(((newC >> 16) & 0xFF));
   			this.code.push(((newC >> 8) & 0xFF));
