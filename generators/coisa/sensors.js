@@ -31,9 +31,9 @@ goog.require('Blockly.Coisa');
 Blockly.Coisa['distance'] = function(block) {
 	var code = "";
 	code += "li	$v0, 12\n";
-	code += "li	$v0, 0\n";
+	code += "li	$v1, 0\n";
 	code += "la	$t4, usID\n";
 	code += "syscall\n";
-	code += "addu	$s1, $zero, $v0"
-  return code;
+	code += "addu	$s1, $zero, $v0\n"
+  return [code, Blockly.Coisa.ORDER_NONE];
 };

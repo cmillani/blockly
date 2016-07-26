@@ -37,7 +37,8 @@ Blockly.Blocks.sensors.HUE = 75;
 Blockly.Blocks['distance'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Distacia");
+        .appendField("Distancia");
+		this.setOutput(true, 'Number');
     this.setTooltip('');
 		this.setColour(Blockly.Blocks.sensors.HUE);
     this.setHelpUrl('http://www.example.com/');
