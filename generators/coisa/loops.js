@@ -29,13 +29,37 @@ goog.provide('Blockly.Coisa.loops');
 goog.require('Blockly.Coisa');
 
 
+Blockly.Coisa['controls_repeat_forever'] = function(block) {
+  if(!Blockly.Coisa['controls_repeat_forever'].count)
+  {
+    Blockly.Coisa['controls_repeat_forever'].count = 0;
+  }
+  Blockly.Coisa['controls_repeat_forever'].count += 1;
+	
+  var branch = Blockly.Coisa.statementToCode(block, 'DO');
+  branch = Blockly.Coisa.addLoopTrap(branch, block.id);
+	
+	var code = "";
+	
+  code += "repeatloopForever_"+Blockly.Coisa['controls_repeat_forever'].count+":\n"; //Loop
+	code += "nop\n";
+
+	code += branch; //Gets the code inside the loop
+	
+  code += "j	repeatloopForever_"+Blockly.Coisa['controls_repeat_forever'].count+"\n";
+  code += "nop\n";
+	
+	return code;
+};
+
 Blockly.Coisa['controls_repeat_ext'] = function(block) {
-  // Repeat n times.
+  // Repeat n times
   if(!Blockly.Coisa['controls_repeat_ext'].count)
   {
     Blockly.Coisa['controls_repeat_ext'].count = 0;
   }
   Blockly.Coisa['controls_repeat_ext'].count += 1;
+	
   if (block.getField('TIMES')) {
     // Internal number.
     var repeats = Number(block.getFieldValue('TIMES'));
@@ -87,7 +111,14 @@ Blockly.Coisa['controls_repeat'] =
     Blockly.Coisa['controls_repeat_ext'];
 
 Blockly.Coisa['controls_whileUntil'] = function(block) {
+  if(!Blockly.Coisa['controls_whileUntil'].count)
+  {
+    Blockly.Coisa['controls_whileUntil'].count = 0;
+  }
+  Blockly.Coisa['controls_whileUntil'].count += 1;
+	
   // Do while/until loop.
+	var code = "";
   var until = block.getFieldValue('MODE') == 'UNTIL';
   var argument0 = Blockly.Coisa.valueToCode(block, 'BOOL',
       until ? Blockly.Coisa.ORDER_LOGICAL_NOT :
@@ -95,9 +126,24 @@ Blockly.Coisa['controls_whileUntil'] = function(block) {
   var branch = Blockly.Coisa.statementToCode(block, 'DO');
   branch = Blockly.Coisa.addLoopTrap(branch, block.id);
   if (until) {
-    argument0 = '!' + argument0;
+		argument0 += "xori	$s2, $s2, -1\n"; //Negates
+		argument0 += "andi	$s2, $s2, 1\n";
   }
-  return 'while (' + argument0 + ') {\n' + branch + '}\n';
+	
+  code += "repeatloopWhileUntil_"+Blockly.Coisa['controls_whileUntil'].count+":\n";
+	code += argument0; //Loads the control variable
+	
+  code += "beq	$s2,$zero,endrepeatWhileUntil_"+Blockly.Coisa['controls_whileUntil'].count+"\n";
+	code += "nop\n";
+
+	code += branch; //Gets the code inside the loop
+	
+  code += "j	repeatloopWhileUntil_"+Blockly.Coisa['controls_whileUntil'].count+"\n";
+  code += "nop\n";
+	
+  code += "endrepeatWhileUntil_"+Blockly.Coisa['controls_whileUntil'].count+":\n";
+
+	return code;
 };
 
 Blockly.Coisa['controls_for'] = function(block) {

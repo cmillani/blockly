@@ -37,7 +37,7 @@ Blockly.Blocks['event_onstart'] = {
   init: function() {
     this.appendStatementInput("CODE")
 				.setCheck(null)
-        .appendField("onStart");
+        .appendField("quando começar");
     this.setColour(Blockly.Blocks.events.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -48,7 +48,7 @@ Blockly.Blocks['event_btdown'] = {
   init: function() {
     this.appendStatementInput("CODE")
         .setCheck(null)
-        .appendField("onButtonPress");
+        .appendField("quando apertar botão");
     this.setColour(Blockly.Blocks.events.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -58,16 +58,16 @@ Blockly.Blocks['event_btdown'] = {
 Blockly.Blocks['event_distancechange'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("onDistanceChange");
+        .appendField("quando a distância mudar");
     this.appendValueInput("threshold")
         .setCheck("Number")
-        .appendField("threshold");
+        .appendField("limite");
     this.appendStatementInput("CodeCloser")
         .setCheck(null)
-        .appendField("onCloserThan");
+        .appendField("inferior ao limite");
     this.appendStatementInput("CodeLarger")
         .setCheck(null)
-        .appendField("onLargerThan");
+        .appendField("superior ao limite");
     this.setColour(Blockly.Blocks.events.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');

@@ -62,7 +62,7 @@ Blockly.Blocks['setup_movement'] = {
 Blockly.Blocks['go_forward'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Go Forward");
+        .appendField("seguir em frente");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);
@@ -95,7 +95,7 @@ Blockly.Blocks['go_right'] = {
 Blockly.Blocks['stop'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Stop Robot");
+        .appendField("parar");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);
@@ -106,7 +106,7 @@ Blockly.Blocks['stop'] = {
 Blockly.Blocks['step_forward'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Step Forward");
+        .appendField("dar um passo");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);
@@ -117,7 +117,7 @@ Blockly.Blocks['step_forward'] = {
 Blockly.Blocks['turn_left'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Turn Left");
+        .appendField("girar à esquerda");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);
@@ -128,7 +128,7 @@ Blockly.Blocks['turn_left'] = {
 Blockly.Blocks['turn_right'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Turn Right");
+        .appendField("girar à direita");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.movement.HUE);

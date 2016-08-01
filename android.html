@@ -6,7 +6,7 @@
   <script src="blockly_compressed.js"></script>
   <script src="coisa_compressed.js"></script>
   <script src="blocks_compressed.js"></script>
-  <script src="msg/js/en.js"></script>
+  <script src="msg/js/pt-br.js"></script>
   <script>
   function toCode() {
     var text = Blockly['Coisa'].workspaceToCode(workspace);
@@ -69,8 +69,8 @@
         <!-- <input type="button" value="Ask Upload" onclick="android.onData(toCode())"> -->
         <!-- <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')"> -->
         <!-- <input type="button" value="Funct" onclick="android.onData(test())"> -->
-        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%" value="Upload/Connect" onclick="console.log(toCode())">
-        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%;float: right;" value="Reset" onclick="android.onReset()">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%" value="Enviar" onclick="console.log(toCode())">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%;float: right;" value="Reiniciar" onclick="android.onReset()">
       </td>
     </tr>
     <tr>
@@ -91,12 +91,16 @@
         </block>
       </value>
     </block>
+    <block type="controls_if"></block>
+    <block type="logic_compare"></block>
+    <block type="math_number"></block>
+    <block type="distance"></block>
 	  <block type="led_red"></block>
 	  <block type="led_green"></block>
     <!-- <block type="setup_movement"></block> -->
 	  <block type="go_forward"></block>
-	  <block type="go_left"></block>
-	  <block type="go_right"></block>
+    <!-- <block type="go_left"></block>
+    <block type="go_right"></block> -->
 	  <block type="stop"></block>
     <block type="step_forward"></block>
     <block type="turn_right"></block>
@@ -108,8 +112,9 @@
         </block>
       </value>
     </block>
-    <block type="math_number"></block>
-    <block type="text"></block>
+    <block type= "controls_repeat_forever"></block>
+    <block type="controls_whileUntil"></block>
+    <!-- <block type="text"></block> -->
   </xml>
 
   <script>

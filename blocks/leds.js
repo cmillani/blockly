@@ -33,8 +33,8 @@ Blockly.Blocks.leds.HUE = 90;
 Blockly.Blocks['led_green'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Green")
-        .appendField(new Blockly.FieldDropdown([["on", "ON"], ["off", "OFF"]]), "STATUS");
+        .appendField("led verde")
+        .appendField(new Blockly.FieldDropdown([["ligar", "ON"], ["desligar", "OFF"]]), "STATUS");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.leds.HUE);
@@ -46,8 +46,8 @@ Blockly.Blocks['led_green'] = {
 Blockly.Blocks['led_red'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("Red")
-        .appendField(new Blockly.FieldDropdown([["on", "ON"], ["off", "OFF"]]), "STATUS");
+        .appendField("led vermelho")
+        .appendField(new Blockly.FieldDropdown([["ligar", "ON"], ["desligar", "OFF"]]), "STATUS");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(Blockly.Blocks.leds.HUE);

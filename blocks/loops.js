@@ -34,6 +34,20 @@ goog.require('Blockly.Blocks');
  */
 Blockly.Blocks.loops.HUE = 120;
 
+Blockly.Blocks['controls_repeat_forever'] = {
+  init: function() {
+    this.appendStatementInput("DO")
+        .setCheck(null)
+        .appendField("repita");
+    this.setInputsInline(false);
+    this.setTooltip('');
+		this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setHelpUrl('http://www.example.com/');
+		this.setColour(Blockly.Blocks.loops.HUE);
+  }
+};
+
 Blockly.Blocks['controls_repeat_ext'] = {
   /**
    * Block for repeat n times (external number).
