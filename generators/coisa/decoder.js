@@ -169,7 +169,7 @@ Decoder = {
 			// console.log(params)
 			if (position)
 			{
-				params[2] = (params[2] - position) >> 2;
+				params[2] = (params[2]) >> 2;
 			}
 			// console.log(params)
       return(["slt " + "$at" + "," + params[0] + "," + params[1], "beq " + "$at" + "," + "$zero" + "," + params[2]]);
