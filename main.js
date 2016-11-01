@@ -46,3 +46,16 @@ function setGroupOfBlocks(workspace, blocks) {
 	toolbox += "</xml>";
 	workspace.updateToolbox(toolbox);
 }
+
+/*If */
+function setBlocksInSpace(workspace, xml) {
+	workspace.clear();
+	if (xml == null) {
+			xml = [
+    	  '<xml xmlns="http://www.w3.org/1999/xhtml">' +
+    	  '	<block type="event_onstart" x="313" y="263"></block>' +
+    	  '</xml>'].join('\n');
+	}
+  var dom = Blockly.Xml.textToDom(xml);
+  Blockly.Xml.domToWorkspace(dom, workspace);
+}
