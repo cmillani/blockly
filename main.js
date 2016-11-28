@@ -32,6 +32,13 @@ var blocksXML = {
 
 Object.freeze(blocksXML);
 
+function getCurrentBlocks(workspace) {
+	var xml = Blockly.Xml.workspaceToDom(workspace);
+	var xmlText = Blockly.Xml.domToPrettyText(xml);
+	console.log(xmlText);
+	return xmlText;
+}
+
 function setGroupOfBlocks(workspace, blocks) {
 	var toolbox = "<xml>";
 	
