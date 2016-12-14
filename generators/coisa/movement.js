@@ -130,3 +130,12 @@ Blockly.Coisa['turn_left'] = function(block) {
 	code += "syscall\n";
   return code;
 };
+Blockly.Coisa['set_step_sz'] = function(block) {
+	var code = Blockly.Coisa.valueToCode(block, 'stepSize', Blockly.Coisa.ORDER_NONE);
+	code += "addiu	$a0, $s1, 0\n";;
+	code += "li	$v0, 12\n";
+	code += "li	$v1, 25\n";
+	code += "la	$t4, movmID\n";
+	code += "syscall\n";
+  return code;
+};

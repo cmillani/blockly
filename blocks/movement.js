@@ -136,3 +136,16 @@ Blockly.Blocks['turn_right'] = {
     this.setHelpUrl('http://www.google.com/');
   }
 };
+Blockly.Blocks['set_step_sz'] = {
+  init: function() {
+    this.appendValueInput("stepSize")
+        .setCheck("Number")
+        .appendField("tamanho do passo");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+		this.setColour(Blockly.Blocks.movement.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
