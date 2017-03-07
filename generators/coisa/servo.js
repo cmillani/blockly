@@ -24,45 +24,25 @@
  */
 'use strict';
 
-goog.provide('Blockly.Coisa.leds');
+goog.provide('Blockly.Coisa.servo');
 
 goog.require('Blockly.Coisa');
 
-Blockly.Coisa['led_red'] = function(block) {
+Blockly.Coisa['servo_up'] = function(block) {
   var dropdown_name = block.getFieldValue('STATUS');
 	var code = '';
-  if (dropdown_name == "OFF")
-	{
-	  code += "li	$v0, 12\n";
-	  code += "li	$v1, 1\n";
-		code += "li	$a0, 1\n";
-		code += "la	$t4, ledID\n";
-	  code += "syscall\n";
-	} else {
-	  code += "li	$v0, 12\n";
-	  code += "li	$v1, 0\n";
-		code += "li	$a0, 1\n";
-		code += "la	$t4, ledID\n";
-	  code += "syscall\n";
-	}
-  return code;
+  code += "li	$v0, 12\n";
+  code += "li	$v1, 0\n";
+	code += "la	$t4, servID\n";
+  code += "syscall\n";
+	return code;
 };
-Blockly.Coisa['led_green'] = function(block) {
+Blockly.Coisa['servo_down'] = function(block) {
   var dropdown_name = block.getFieldValue('STATUS');
 	var code = '';
-  if (dropdown_name == "OFF")
-	{
-	  code += "li	$v0, 12\n";
-	  code += "li	$v1, 1\n";
-		code += "li	$a0, 2\n";
-		code += "la	$t4, ledID\n";
-	  code += "syscall\n";
-	} else {
-	  code += "li	$v0, 12\n";
-	  code += "li	$v1, 0\n";
-		code += "li	$a0, 2\n";
-		code += "la	$t4, ledID\n";
-	  code += "syscall\n";
-	}
+  code += "li	$v0, 12\n";
+  code += "li	$v1, 1\n";
+	code += "la	$t4, servID\n";
+  code += "syscall\n";
   return code;
 };

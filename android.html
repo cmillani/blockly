@@ -44,7 +44,7 @@
       margin: 0;
     }
     body {
-      background-color: #fff;
+      background-color: #383C69;
       font-family: sans-serif;
       overflow: hidden;
     }
@@ -60,20 +60,32 @@
       height: 90%;
       -webkit-transform: translate3d(0,0,0);
       transform: translate3d(0, 0, 0);
+/*			background-color: #93B874;*/
     }
+		#toolbox {
+/*			background-color: #93B874;*/
+		}
+		#blocklyDiv {
+/*			background-color: #93B874;*/
+		}
+		/*.blocklyTooltipBackground {
+		          fill: #ffffc7;
+		          stroke: #d8d8d8;
+		          stroke-width: 1px;
+		}*/
   </style>
 </head>
 <body>
   <table>
-    <tr>
-      <td>
+    <!-- <tr> -->
+      <!-- <td> -->
         <!-- <input type="button" value="Ask Upload" onclick="android.onData(toCode())"> -->
         <!-- <input type="button" value="Aalou" onclick="android.onData('Aaaalou!')"> -->
         <!-- <input type="button" value="Funct" onclick="android.onData(test())"> -->
-        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%" value="Enviar" onclick="console.log(toCode())">
-        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%;float: right;" value="Reiniciar" onclick="android.onReset()">
-      </td>
-    </tr>
+        <!-- <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%" value="Enviar" onclick="console.log(toCode())">
+        <input type="button" style="-webkit-appearance: none;height:100%;width:49%;font-size: 100%;float: right;" value="Reiniciar" onclick="android.onReset()"> -->
+      <!-- </td> -->
+    <!-- </tr> -->
     <tr>
       <td id="blocklyArea">
       </td>
@@ -106,6 +118,8 @@
     <block type="step_forward"></block>
     <block type="turn_right"></block>
     <block type="turn_left"></block>
+		<block type="servo_up"></block>
+		<block type="servo_down"></block>
     <block type="controls_repeat_ext">
       <value name="TIMES">
         <block type="math_number">
@@ -123,7 +137,9 @@
     var blocklyDiv = document.getElementById('blocklyDiv');
     var workspace = Blockly.inject(blocklyDiv,
         {media: './media/',
-         toolbox: document.getElementById('toolbox')});
+         toolbox: document.getElementById('toolbox'),
+				 trashcan: true,
+				 css: true});
     var onresize = function(e) {
       // Compute the absolute coordinates and dimensions of blocklyArea.
       var element = blocklyArea;

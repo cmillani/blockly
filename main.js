@@ -32,6 +32,7 @@ var blocksXML = {
 
 Object.freeze(blocksXML);
 
+
 function getCurrentBlocks(workspace) {
 	var xml = Blockly.Xml.workspaceToDom(workspace);
 	var xmlText = Blockly.Xml.domToPrettyText(xml);

@@ -174,6 +174,7 @@ Blockly.Coisa.finish = function(code) {
 	final_code += "usIDf:	.asciiz \"US_F\"\n";
 	final_code += "ledID:	.asciiz \"LEDS\"\n";
 	final_code += "encdID:	.asciiz \"ENCD\"\n";
+	final_code += "servID:	.asciiz \"SERV\"\n";
 	
 	code = final_code
 	
