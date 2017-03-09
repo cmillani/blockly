@@ -32,6 +32,7 @@
     // console.log(byteArray);
     // console.log("BB");
     // console.log(string);
+		console.log(program);
     return program;
   }
   function test() {
@@ -138,7 +139,7 @@
     var workspace = Blockly.inject(blocklyDiv,
         {media: './media/',
          toolbox: document.getElementById('toolbox'),
-				 trashcan: true,
+				 trashcan: false,
 				 css: true});
     var onresize = function(e) {
       // Compute the absolute coordinates and dimensions of blocklyArea.
